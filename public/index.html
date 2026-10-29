@@ -475,6 +475,8 @@ footer{border-top:1px solid var(--line);padding-block:40px;font-size:14px;color:
           <div class="fields">
             <label class="f" for="cName">Your name<input id="cName" autocomplete="name" placeholder="Jordan Lee"></label>
             <label class="f" for="cPhone">Mobile number<input id="cPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(612) 555-0142"></label>
+            <label class="f full" for="cEmail">Email <span style="font-weight:400">(optional, for your quote)</span><input id="cEmail" type="email" autocomplete="email" placeholder="jordan@example.com"></label>
+            <input id="cWebsite" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px">
             <label class="f full" for="cAddr">Pickup address<input id="cAddr" autocomplete="street-address" placeholder="2210 Maple Ave"></label>
             <label class="f full" for="cNotes">Anything we should know? <span style="font-weight:400">(optional)</span><textarea id="cNotes" placeholder="Couch is in the basement, side door is unlocked"></textarea></label>
             <div class="full" style="display:flex;flex-direction:column;gap:6px"><span class="lbl">Photos help us quote <span style="font-weight:400">(optional)</span></span>
@@ -487,6 +489,7 @@ footer{border-top:1px solid var(--line);padding-block:40px;font-size:14px;color:
           <div><span class="stepnum">Almost done</span><h3>Does this look right?</h3></div>
           <div id="cSummary"></div>
           <div class="est-price"><div><div class="eyebrow" style="color:var(--muted)">Estimated price</div><span class="muted" style="font-size:13px">Confirmed on-site before we load. Pay after.</span></div><span class="big mono" id="cPrice"></span></div>
+          <p class="hint" id="h5"></p>
           <div class="wnav"><button class="btn ghost" data-go="4">Back</button><button class="btn" id="cConfirm">Confirm booking</button></div>
         </div>
         <div class="wstep" data-step="6" hidden>
@@ -497,7 +500,7 @@ footer{border-top:1px solid var(--line);padding-block:40px;font-size:14px;color:
           </div>
           <div id="cDoneSum"></div>
           <button class="btn ghost" id="cAgain">Book another pickup</button>
-          <p class="muted" style="font-size:12px;text-align:center">Preview site: this booking is saved in this browser only and isn't sent to anyone yet.</p>
+          <p class="muted" style="font-size:12px;text-align:center">We'll confirm by text. Questions? Reply to that text anytime.</p>
         </div>
       </div>
       <aside class="aside" aria-label="Your booking so far">
@@ -590,7 +593,7 @@ const esc=s=>String(s??"").replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&
 const fracLabel=f=>({0.125:"⅛",0.25:"¼",0.5:"½",1:"Full"})[f]||"";
 const yards=f=>{const y=15*f;return (Number.isInteger(y)?y:+y.toFixed(2))+" yd³"};
 const fee=id=>(DATA.extras.find(e=>e.id===id)||{}).price||0;
-const imgSrc=v=>/^[0-9a-f]{32}$/.test(v)?"/_blob/"+v:v;
+const imgSrc=v=>/^g\/[0-9a-f]{16}$/.test(v)?"/api/photo?key="+encodeURIComponent(v):/^[0-9a-f]{32}$/.test(v)?"/_blob/"+v:v;
 let toastT;function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2200)}
 
 /* ---------- render content from DATA ---------- */
@@ -694,7 +697,10 @@ $("#hBook").addEventListener("click",()=>pickSize(heroI));
 const c={items:new Set(),i:null,date:null,win:null,photos:[]};
 const fees=()=>$$("#cItems .tile").filter(t=>c.items.has(t.dataset.item)&&t.dataset.fee).reduce((a,t)=>a+fee(t.dataset.fee),0);
 const estimate=()=>c.i==null?null:DATA.loads[c.i].price+fees();
-let bookings=store.get("ehl-bookings",[]);
+const takenByDate={};
+async function loadTaken(date){
+  try{const r=await fetch("/api/slots?date="+date);if(r.ok){takenByDate[date]=(await r.json()).taken||[];if(c.date===date)renderDays()}}catch(e){}
+}
 
 function show(n){
   $$(".wstep").forEach(s=>s.hidden=+s.dataset.step!==n);
@@ -720,11 +726,11 @@ function renderDays(){
     const d=new Date();d.setDate(d.getDate()+k);const v=localIso(d);const closed=d.getDay()===0;
     const b=document.createElement("button");b.type="button";b.className="day";b.disabled=closed;b.setAttribute("aria-pressed",c.date===v);
     b.innerHTML=`${d.toLocaleDateString(undefined,{weekday:"short"})}<b>${d.getDate()}</b>${closed?"Closed":d.toLocaleDateString(undefined,{month:"short"})}`;
-    b.onclick=()=>{c.date=v;c.win=null;renderDays();renderAside()};box.appendChild(b);
+    b.onclick=()=>{c.date=v;c.win=null;renderDays();renderAside();loadTaken(v)};box.appendChild(b);
   }
   const s=$("#cSlots");s.innerHTML="";
   WINDOWS.forEach(([w,label])=>{
-    const taken=c.date&&bookings.some(j=>j.date===c.date&&j.win===w);
+    const taken=c.date&&(takenByDate[c.date]||[]).includes(w);
     const b=document.createElement("button");b.type="button";b.className="slot";b.disabled=!c.date||taken;b.setAttribute("aria-pressed",c.win===w);
     b.innerHTML=`${w}<small>${taken?"Already booked":!c.date?"Pick a day":label}</small>`;
     b.onclick=()=>{c.win=w;renderDays();renderAside()};s.appendChild(b);
@@ -736,6 +742,7 @@ $("#cForm").addEventListener("submit",e=>{e.preventDefault();
   if(!$("#cName").value.trim())return $("#h4").textContent="Add your name so our crew knows who to ask for.";
   if($("#cPhone").value.replace(/\D/g,"").length<10)return $("#h4").textContent="Enter a 10-digit mobile number so we can text you.";
   if(!$("#cAddr").value.trim())return $("#h4").textContent="Add the pickup address.";
+  const em=$("#cEmail").value.trim();if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))return $("#h4").textContent="That email address doesn't look right. Fix it or leave it blank.";
   show(5);scrollToBook();
 });
 const niceDate=v=>new Date(v+"T12:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
@@ -753,12 +760,26 @@ function renderAside(){
   $("#asideBody").innerHTML=parts.join("")||"Pick what's going to see a price.";
   $("#asidePrice").textContent=estimate()?"$"+estimate():"—";
 }
-$("#cConfirm").onclick=()=>{
-  bookings.push({date:c.date,win:c.win,name:$("#cName").value.trim(),addr:$("#cAddr").value.trim(),phone:$("#cPhone").value,items:[...c.items],size:DATA.loads[c.i].name,notes:$("#cNotes").value.trim(),price:estimate(),at:Date.now()});
-  store.set("ehl-bookings",bookings);
-  $("#cDoneMsg").textContent=`See you ${niceDate(c.date)} between ${c.win}. We'll text ${$("#cPhone").value} when the truck is 30 minutes out.`;
-  $("#cDoneSum").innerHTML=summary(false)+`<div class="sumrow"><span class="k">Estimate</span><span class="v mono" style="color:var(--amber)">$${estimate()}</span></div>`;
-  show(6);scrollToBook();
+function shrink(dataUrl){return new Promise(res=>{const im=new Image();im.onload=()=>{const m=1280,k=Math.min(1,m/Math.max(im.width,im.height));const cv=document.createElement("canvas");cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);res(cv.toDataURL("image/jpeg",.72))};im.onerror=()=>res(null);im.src=dataUrl})}
+$("#cConfirm").onclick=async()=>{
+  const btn=$("#cConfirm"),hint=$("#h5");btn.disabled=true;btn.textContent="Sending…";hint.textContent="";
+  try{
+    const photos=(await Promise.all(c.photos.slice(0,4).map(shrink))).filter(Boolean);
+    const r=await fetch("/api/bookings",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({
+      name:$("#cName").value.trim(),phone:$("#cPhone").value.trim(),email:$("#cEmail").value.trim(),addr:$("#cAddr").value.trim(),
+      website:$("#cWebsite").value,date:c.date,win:c.win,items:[...c.items],size:DATA.loads[c.i].name,estimate:estimate(),notes:$("#cNotes").value.trim(),photos})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){
+      hint.textContent=j.error||"Your booking didn't go through. Try again in a moment.";
+      if(r.status===409){(takenByDate[c.date]=takenByDate[c.date]||[]).push(c.win);c.win=null}
+      return;
+    }
+    $("#cDoneMsg").textContent=`See you ${niceDate(c.date)} between ${c.win}. We'll text ${$("#cPhone").value} to confirm and again when the truck is 30 minutes out.`;
+    $("#cDoneSum").innerHTML=summary(false)+`<div class="sumrow"><span class="k">Estimate</span><span class="v mono" style="color:var(--amber)">$${estimate()}</span></div>`;
+    (takenByDate[c.date]=takenByDate[c.date]||[]).push(c.win);
+    show(6);scrollToBook();
+  }catch(e){hint.textContent="Your booking didn't go through. Check your connection and try again."}
+  finally{btn.disabled=false;btn.textContent="Confirm booking"}
 };
 $("#cAgain").onclick=()=>{c.items.clear();c.i=null;c.date=null;c.win=null;c.photos=[];drawPhotos();$("#cForm").reset();$$("#cItems .tile,#cSizes .size").forEach(x=>x.setAttribute("aria-pressed","false"));show(1)};
 
@@ -827,7 +848,14 @@ $("#dSave").onclick=async()=>{
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#drawer").hidden)closeDrawer()});
 
 renderAll();
-try{initMap()}catch(e){$("#mapcard").hidden=true;$("#radiusFallback").hidden=false}
+(async()=>{
+  try{
+    const ctl=new AbortController();setTimeout(()=>ctl.abort(),3000);
+    const r=await fetch("/api/settings",{signal:ctl.signal});
+    if(r.ok){const live=await r.json();if(live&&Array.isArray(live.loads)){DATA=Object.assign(DATA,live);renderAll()}}
+  }catch(e){}
+  try{initMap()}catch(e){$("#mapcard").hidden=true;$("#radiusFallback").hidden=false}
+})();
 (async()=>{
   if(!window.claude||!claude.use)return;
   const [art,user,assets]=await Promise.all([claude.use("artifact"),claude.use("user"),claude.use("assets")]);

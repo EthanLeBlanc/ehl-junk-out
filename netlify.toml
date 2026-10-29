@@ -1,2 +1,17 @@
 [build]
-  publish = "."
+  publish = "public"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+    Cache-Control = "no-store"
+
+[[headers]]
+  for = "/quote.html"
+  [headers.values]
+    X-Robots-Tag = "noindex"

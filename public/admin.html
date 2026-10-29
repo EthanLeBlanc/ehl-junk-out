@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>EHL Junk Out Admin</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: owner console. Sticky top bar with tabs; bookings list + slide-over detail; settings as stacked panels. Same dark/amber identity as the public site. */
+:root{
+  --bg:#111419; --band:#161a20; --panel:#1c212a; --panel2:#252c37; --line:#323b48;
+  --fg:#eef1f4; --muted:#97a3b3; --amber:#ffb020; --amber-ink:#1a1204;
+  --new:#5aa9ff; --quoted:#ffb020; --accepted:#4fd18b; --declined:#ff6b6b; --done:#97a3b3; --cancelled:#6b7685;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Figtree",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--body);-webkit-tap-highlight-color:transparent;padding-bottom:env(safe-area-inset-bottom,0px)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--band)}
+[hidden]{display:none!important}
+h1,h2,h3{font-family:var(--display);margin:0;letter-spacing:-.02em;text-wrap:balance}
+p{margin:0}
+a{color:var(--amber)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--amber);font-weight:700}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.btn{appearance:none;border:none;background:var(--amber);color:var(--amber-ink);font:700 15px var(--body);padding:12px 18px;border-radius:10px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.btn.ghost{background:transparent;color:var(--fg);border:1.5px solid var(--line)}
+.btn.danger{background:transparent;color:var(--declined);border:1.5px solid rgba(255,107,107,.4)}
+.btn.small{padding:8px 12px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+input,textarea,select{background:var(--panel2);border:1.5px solid var(--line);color:var(--fg);border-radius:10px;padding:11px;font:16px var(--body);width:100%;min-width:0}
+input:focus,textarea:focus,select:focus{border-color:var(--amber);outline:none}
+textarea{resize:vertical}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted);font-weight:600;min-width:0}
+.money{position:relative}
+.money::before{content:"$";position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.money input{padding-left:24px;font-family:var(--mono)}
+
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.login form{width:min(380px,100%);background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:16px}
+.mark{width:34px;height:34px;border-radius:9px;background:repeating-linear-gradient(-45deg,var(--amber) 0 6px,var(--amber-ink) 6px 12px)}
+.err{color:var(--declined);font-size:14px;min-height:20px}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--band);border-bottom:1px solid var(--line)}
+.topin{display:flex;align-items:center;gap:16px;height:62px}
+.logo{display:flex;align-items:center;gap:10px;font:800 18px var(--display);white-space:nowrap}
+.logo .mark{width:26px;height:26px;border-radius:7px}
+.logo small{font:600 11px var(--body);color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
+.tabs{display:flex;gap:4px;margin-left:auto}
+.tabs button{appearance:none;background:none;border:none;color:var(--muted);font:700 15px var(--body);padding:8px 12px;border-radius:8px;cursor:pointer}
+.tabs button[aria-current="page"]{color:var(--fg);background:var(--panel2)}
+.topin .out{background:none;border:none;color:var(--muted);font:600 13px var(--body);cursor:pointer;padding:8px}
+@media (max-width:560px){.logo small{display:none}.topin{gap:8px}}
+
+main{padding-block:24px 60px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:var(--panel);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:2px;border-top:3px solid var(--line)}
+.stat b{font:800 28px var(--display)}
+.stat span{font-size:13px;color:var(--muted)}
+@media (max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.filters button{appearance:none;border:1.5px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;padding:6px 14px;font:600 14px var(--body);cursor:pointer}
+.filters button[aria-pressed="true"]{border-color:var(--amber);color:var(--amber)}
+.filters .refresh{margin-left:auto}
+.list{display:flex;flex-direction:column;gap:10px}
+.row{appearance:none;width:100%;text-align:left;background:var(--panel);border:1.5px solid transparent;border-radius:14px;padding:14px 16px;display:grid;grid-template-columns:110px 1fr auto;gap:4px 16px;align-items:center;color:var(--fg);font:inherit;cursor:pointer}
+.row:hover{border-color:var(--line)}
+.row .when{font:600 14px var(--body)}
+.row .when small{display:block;color:var(--muted);font-weight:500}
+.row .who{min-width:0}
+.row .who b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .who span{display:block;color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+@media (max-width:560px){.row{grid-template-columns:1fr auto}.row .when{grid-column:1/-1;display:flex;gap:8px}.row .when small{display:inline}}
+.pill{font-size:11px;font-weight:800;padding:4px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;background:color-mix(in srgb,var(--c) 18%,transparent);color:var(--c)}
+.pill.new{--c:var(--new)}.pill.quoted{--c:var(--quoted)}.pill.accepted{--c:var(--accepted)}.pill.declined{--c:var(--declined)}.pill.done{--c:var(--done)}.pill.cancelled{--c:var(--cancelled)}
+.empty{background:var(--panel);border-radius:14px;padding:40px 20px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:8px;align-items:center}
+.empty b{color:var(--fg);font-size:17px}
+
+/* detail drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:39}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);background:var(--band);border-left:1px solid var(--line);z-index:40;display:flex;flex-direction:column}
+.dhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:calc(16px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) 14px 20px;border-bottom:1px solid var(--line)}
+.dbody{flex:1;overflow-y:auto;padding:18px max(20px,env(safe-area-inset-right,0px)) calc(30px + env(safe-area-inset-bottom,0px)) 20px;display:flex;flex-direction:column;gap:18px}
+.card{background:var(--panel);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.card h3{font-size:16px}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:8px 12px;font-size:15px}
+.kv dt{color:var(--muted);font-size:13px;padding-top:2px}
+.kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap}
+.thumbs a{display:block;width:84px;height:84px;border-radius:10px;overflow:hidden;background:var(--panel2)}
+.thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.sent{background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.3);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.resp{border-radius:12px;padding:12px;font-weight:600}
+.resp.yes{background:rgba(79,209,139,.1);color:var(--accepted)}
+.resp.no{background:rgba(255,107,107,.1);color:var(--declined)}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}
+.hist b{color:var(--fg);font-weight:600}
+.status{font-size:13px;min-height:18px;color:var(--muted)}
+.status.err{color:var(--declined)}
+
+/* settings */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.sgrid{grid-template-columns:1fr}}
+.prow{display:grid;grid-template-columns:1fr 1.4fr 110px;gap:8px;align-items:center}
+.erow{display:grid;grid-template-columns:1fr 110px 40px;gap:8px;align-items:center}
+.prow .tag{font:500 12px var(--mono);color:var(--muted)}
+@media (max-width:560px){.prow{grid-template-columns:1fr 110px}.prow .pdesc{grid-column:1/-1;grid-row:2}}
+.x{appearance:none;background:none;border:1.5px solid var(--line);color:var(--muted);border-radius:8px;height:40px;cursor:pointer;font-size:18px}
+.gitem{display:grid;grid-template-columns:64px 64px 1fr auto;gap:8px;align-items:center;background:var(--panel2);border-radius:12px;padding:8px}
+.gitem img{width:64px;height:64px;object-fit:cover;border-radius:8px}
+.savebar{position:sticky;bottom:0;margin-top:20px;background:var(--band);border:1px solid var(--line);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;margin-bottom:env(safe-area-inset-bottom,0px)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;font-size:14px;z-index:60;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login" id="loginView">
+  <form id="loginForm">
+    <div class="mark"></div>
+    <div><div class="eyebrow">Owner login</div><h1 style="font-size:28px">EHL Junk Out Admin</h1></div>
+    <label class="f" for="pw">Password<input id="pw" type="password" autocomplete="current-password" required></label>
+    <p class="err" id="loginErr"></p>
+    <button class="btn" type="submit" id="loginBtn">Log in</button>
+    <a href="/" style="font-size:14px;color:var(--muted)">Back to website</a>
+  </form>
+</div>
+
+<!-- APP -->
+<div id="appView" hidden>
+  <header class="top"><div class="wrap topin">
+    <div class="logo"><span class="mark"></span>EHL Junk Out <small>Admin</small></div>
+    <nav class="tabs" aria-label="Sections">
+      <button data-tab="bookings" aria-current="page">Bookings</button>
+      <button data-tab="settings">Website</button>
+    </nav>
+    <button class="out" id="logout">Log out</button>
+  </div></header>
+
+  <main class="wrap">
+    <!-- BOOKINGS -->
+    <section id="tab-bookings">
+      <div class="stats" id="stats"></div>
+      <div class="filters" id="filters">
+        <button data-f="open" aria-pressed="true">Open</button>
+        <button data-f="new" aria-pressed="false">New</button>
+        <button data-f="quoted" aria-pressed="false">Quoted</button>
+        <button data-f="accepted" aria-pressed="false">Accepted</button>
+        <button data-f="done" aria-pressed="false">Done</button>
+        <button data-f="all" aria-pressed="false">All</button>
+        <button class="btn ghost small refresh" id="refresh" type="button">Refresh</button>
+      </div>
+      <div class="list" id="list"></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="tab-settings" hidden>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:18px"><div class="eyebrow">Website</div><h2 style="font-size:28px">Edit what customers see</h2><p class="muted">Changes go live on ehljunkout.netlify.app when you save.</p></div>
+      <div class="sgrid">
+        <div class="card"><h3>Trailer load prices</h3><div id="sLoads" style="display:flex;flex-direction:column;gap:10px"></div></div>
+        <div class="card"><h3>Extra fees</h3><div id="sExtras" style="display:flex;flex-direction:column;gap:8px"></div><button class="btn ghost small" id="addExtra" type="button" style="align-self:flex-start">Add a fee</button></div>
+        <div class="card"><h3>Service area</h3>
+          <label class="f" for="sCity">Home base<input id="sCity"></label>
+          <div class="two"><label class="f" for="sMiles">Radius (miles)<input id="sMiles" type="number" inputmode="numeric" min="1"></label>
+          <label class="f" for="sTravel">Travel fee beyond<div class="money"><input id="sTravel" type="number" inputmode="numeric" min="0"></div></label></div>
+          <p class="muted" style="font-size:12px;margin-top:-4px">Set the travel fee to 0 to show "Ask us" instead.</p>
+          <label class="f" for="sTowns">Towns you cover <span style="font-weight:400">(one per line)</span><textarea id="sTowns" rows="6"></textarea></label>
+        </div>
+        <div class="card"><h3>About us</h3>
+          <label class="f" for="sAboutHead">Headline<input id="sAboutHead"></label>
+          <label class="f" for="sAboutBody">Your story <span style="font-weight:400">(blank line between paragraphs)</span><textarea id="sAboutBody" rows="7"></textarea></label>
+          <label class="f" for="sSign">Signed by<input id="sSign" placeholder="Your name, Owner"></label>
+        </div>
+        <div class="card" style="grid-column:1/-1"><h3>Before &amp; after photos</h3>
+          <div id="sGallery" style="display:flex;flex-direction:column;gap:8px"></div>
+          <div class="two">
+            <label class="f" for="gBefore">Before photo<input id="gBefore" type="file" accept="image/*"></label>
+            <label class="f" for="gAfter">After photo<input id="gAfter" type="file" accept="image/*"></label>
+          </div>
+          <label class="f" for="gCap">Caption<input id="gCap" placeholder="Garage cleanout in Maple Grove, half trailer"></label>
+          <button class="btn ghost small" id="gAdd" type="button" style="align-self:flex-start">Upload photo pair</button>
+        </div>
+      </div>
+      <div class="savebar"><span class="status" id="sStatus">Not saved yet.</span><button class="btn" id="sSave">Save &amp; publish</button></div>
+    </section>
+  </main>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="Booking details"></aside>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
+const WINDOWS=["8–10 AM","10–12 PM","12–2 PM","2–4 PM"];
+const LABEL={new:"New",quoted:"Quoted",accepted:"Accepted",declined:"Declined",done:"Done",cancelled:"Cancelled"};
+let KEY=LS.get("ehl-admin-key")||"";
+let BOOKINGS=[],FILTER="open",SETTINGS=null;
+let toastT;function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2400)}
+
+async function api(path,opts={}){
+  const r=await fetch("/api"+path,{...opts,headers:{"content-type":"application/json","x-admin-key":KEY,...(opts.headers||{})}});
+  const j=await r.json().catch(()=>({}));
+  if(r.status===401&&path!=="/admin/check"){logout("Your login expired. Log in again.");throw new Error("auth")}
+  if(!r.ok)throw Object.assign(new Error(j.error||"Request failed"),{status:r.status});
+  return j;
+}
+
+/* ---------- login ---------- */
+$("#loginForm").addEventListener("submit",async e=>{
+  e.preventDefault();const btn=$("#loginBtn");btn.disabled=true;$("#loginErr").textContent="";
+  KEY=$("#pw").value;
+  try{await api("/admin/check");LS.set("ehl-admin-key",KEY);start()}
+  catch(err){$("#loginErr").textContent=err.status===401?"That password isn't right.":err.message}
+  btn.disabled=false;
+});
+function logout(msg){LS.set("ehl-admin-key",null);KEY="";$("#appView").hidden=true;$("#loginView").hidden=false;$("#loginErr").textContent=msg||"";closeDrawer()}
+$("#logout").onclick=()=>logout();
+async function start(){$("#loginView").hidden=true;$("#appView").hidden=false;await loadBookings();}
+
+/* ---------- tabs ---------- */
+$$(".tabs button").forEach(b=>b.onclick=()=>{
+  $$(".tabs button").forEach(x=>x.toggleAttribute("aria-current",x===b));b.setAttribute("aria-current","page");
+  $("#tab-bookings").hidden=b.dataset.tab!=="bookings";$("#tab-settings").hidden=b.dataset.tab!=="settings";
+  if(b.dataset.tab==="settings"&&!SETTINGS)loadSettings();
+});
+
+/* ---------- bookings ---------- */
+const niceDate=v=>v?new Date(v+"T12:00").toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"}):"";
+const longDate=v=>new Date(v+"T12:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
+const ago=iso=>{const m=Math.round((Date.now()-new Date(iso))/60000);return m<60?m+" min ago":m<1440?Math.round(m/60)+" hr ago":Math.round(m/1440)+" days ago"};
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+
+async function loadBookings(){
+  $("#list").innerHTML=`<div class="empty">Loading bookings…</div>`;
+  try{BOOKINGS=await api("/admin/bookings");renderBookings()}
+  catch(e){if(e.message!=="auth")$("#list").innerHTML=`<div class="empty"><b>Couldn't load bookings</b>${esc(e.message)}</div>`}
+}
+$("#refresh").onclick=loadBookings;
+$$("#filters [data-f]").forEach(b=>b.onclick=()=>{FILTER=b.dataset.f;$$("#filters [data-f]").forEach(x=>x.setAttribute("aria-pressed",x===b));renderBookings()});
+
+function renderBookings(){
+  const t=today();
+  const count=s=>BOOKINGS.filter(b=>b.status===s).length;
+  const upcoming=BOOKINGS.filter(b=>b.status==="accepted"&&b.date>=t).length;
+  const month=t.slice(0,7);
+  const revenue=BOOKINGS.filter(b=>b.status==="done"&&(b.date||"").startsWith(month)).reduce((a,b)=>a+(b.finalPrice??b.quote?.amount??b.estimate??0),0);
+  $("#stats").innerHTML=[
+    ["New, needs a quote",count("new"),"var(--new)"],["Waiting on customer",count("quoted"),"var(--quoted)"],
+    ["Accepted, upcoming",upcoming,"var(--accepted)"],["Done this month","$"+revenue.toLocaleString(),"var(--done)"]
+  ].map(([l,v,c])=>`<div class="stat" style="border-top-color:${c}"><b class="mono">${v}</b><span>${l}</span></div>`).join("");
+  const OPEN=["new","quoted","accepted"];
+  let list=BOOKINGS.filter(b=>FILTER==="all"?true:FILTER==="open"?OPEN.includes(b.status):b.status===FILTER);
+  list.sort((a,b)=>FILTER==="done"||FILTER==="all"?(b.date||"").localeCompare(a.date||""):(a.date||"").localeCompare(b.date||""));
+  if(!list.length){
+    $("#list").innerHTML=BOOKINGS.length?`<div class="empty"><b>Nothing here</b>No bookings with this status.</div>`
+      :`<div class="empty"><b>No bookings yet</b>When a customer books on your website, it shows up here.</div>`;return;
+  }
+  $("#list").innerHTML=list.map(b=>{
+    const price=b.finalPrice??b.quote?.amount??b.estimate;
+    return `<button class="row" data-id="${esc(b.id)}"><div class="when">${niceDate(b.date)}<small>${esc(b.win)}</small></div>
+    <div class="who"><b>${esc(b.customer.name)}</b><span>${esc(b.size)} · ${esc(b.items.join(", "))}</span><span>${esc(b.customer.addr)}</span></div>
+    <div class="right"><span class="pill ${b.status}">${LABEL[b.status]}</span><span class="mono">${price!=null?"$"+price:"—"}</span></div></button>`}).join("");
+  $$("#list .row").forEach(r=>r.onclick=()=>openBooking(r.dataset.id));
+}
+
+/* ---------- booking detail ---------- */
+let CUR=null,photoUrls=[];
+function closeDrawer(){$("#drawer").hidden=true;$("#scrim").hidden=true;photoUrls.forEach(u=>URL.revokeObjectURL(u));photoUrls=[];CUR=null}
+$("#scrim").onclick=closeDrawer;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#drawer").hidden)closeDrawer()});
+const quoteLink=b=>location.origin+"/quote.html?id="+encodeURIComponent(b.id)+"&k="+b.token;
+const firstName=b=>(b.customer.name||"").split(" ")[0];
+function defaultMsg(b,amount){return `Hi ${firstName(b)}, thanks for booking with EHL Junk Out! Based on what you described (${b.size.toLowerCase()}: ${b.items.join(", ").toLowerCase()}), your price is $${amount}. That includes loading, hauling and disposal. We'll see you ${longDate(b.date)} between ${b.win}.`}
+function smsBody(b){return `${b.quote.message}\n\nView and accept your quote: ${quoteLink(b)}`}
+
+function openBooking(id){
+  CUR=BOOKINGS.find(b=>b.id===id);if(!CUR)return;
+  photoUrls.forEach(u=>URL.revokeObjectURL(u));photoUrls=[];
+  renderDrawer();$("#drawer").hidden=false;$("#scrim").hidden=false;
+  loadPhotos(CUR);
+}
+function renderDrawer(){
+  const b=CUR,c=b.customer,q=b.quote,phoneDigits=c.phone.replace(/[^\d+]/g,"");
+  const amt=q?.amount??b.estimate??"";
+  $("#drawer").innerHTML=`
+  <div class="dhead"><div><span class="pill ${b.status}">${LABEL[b.status]}</span><h2 style="font-size:24px;margin-top:8px">${esc(c.name)}</h2><p class="muted" style="font-size:13px">Booked ${ago(b.createdAt)} · #${esc(b.id)}</p></div><button class="btn ghost small" id="dClose">Close</button></div>
+  <div class="dbody">
+    <div class="card"><h3>Customer</h3>
+      <dl class="kv"><dt>Phone</dt><dd><a href="tel:${esc(phoneDigits)}">${esc(c.phone)}</a></dd>
+      ${c.email?`<dt>Email</dt><dd><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></dd>`:""}
+      <dt>Address</dt><dd><a href="https://maps.google.com/?q=${encodeURIComponent(c.addr)}" target="_blank" rel="noopener">${esc(c.addr)}</a></dd></dl>
+    </div>
+    <div class="card"><h3>The job</h3>
+      <dl class="kv"><dt>Items</dt><dd>${esc(b.items.join(", "))}</dd><dt>Size</dt><dd>${esc(b.size)}</dd>
+      <dt>Site estimate</dt><dd class="mono">${b.estimate!=null?"$"+b.estimate:"—"}</dd>
+      ${b.notes?`<dt>Their notes</dt><dd>${esc(b.notes)}</dd>`:""}</dl>
+      ${b.photos?.length?`<div class="thumbs" id="thumbs">${b.photos.map(()=>`<a><span></span></a>`).join("")}</div>`:`<p class="muted" style="font-size:13px">No photos sent.</p>`}
+    </div>
+    <div class="card"><h3>Schedule</h3>
+      <div class="two"><label class="f" for="dDate">Day<input type="date" id="dDate" value="${esc(b.date)}"></label>
+      <label class="f" for="dWin">Arrival window<select id="dWin">${WINDOWS.map(w=>`<option${w===b.win?" selected":""}>${w}</option>`).join("")}</select></label></div>
+      <button class="btn ghost small" id="dSaveSched" style="align-self:flex-start">Save schedule</button>
+    </div>
+    <div class="card"><h3>Quote</h3>
+      ${b.response?`<div class="resp ${b.response.accepted?"yes":"no"}">${b.response.accepted?"✓ Customer accepted":"✕ Customer declined"} ${ago(b.response.at)}${b.response.note?`<br><span style="font-weight:400;color:var(--fg)">“${esc(b.response.note)}”</span>`:""}</div>`:""}
+      <label class="f" for="qAmt">Price<div class="money"><input id="qAmt" type="number" inputmode="numeric" min="0" value="${esc(amt)}"></div></label>
+      <label class="f" for="qMsg">Message<textarea id="qMsg" rows="5">${esc(q?.message||defaultMsg(b,amt||0))}</textarea></label>
+      <button class="btn" id="qSend">${q?"Update quote":"Save quote"}</button>
+      ${q?`<div class="sent"><span style="font-size:13px"><b>Quote $${q.amount}</b> saved ${ago(q.sentAt)}. Send it to ${esc(firstName(b))}:</span>
+        <div class="actions">
+          <a class="btn small" href="sms:${esc(phoneDigits)}?&body=${encodeURIComponent(smsBody(b))}">Text it</a>
+          ${c.email?`<a class="btn ghost small" href="mailto:${esc(c.email)}?subject=${encodeURIComponent("Your EHL Junk Out quote: $"+q.amount)}&body=${encodeURIComponent(smsBody(b))}">Email it</a>`:""}
+          <button class="btn ghost small" id="qCopy">Copy link</button>
+          <a class="btn ghost small" href="${esc(quoteLink(b))}" target="_blank" rel="noopener">Preview</a>
+        </div></div>`:""}
+      <p class="status" id="qStatus"></p>
+    </div>
+    <div class="card"><h3>Finish up</h3>
+      <div class="two"><label class="f" for="dFinal">Final price charged<div class="money"><input id="dFinal" type="number" inputmode="numeric" min="0" value="${esc(b.finalPrice??"")}" placeholder="${esc(q?.amount??b.estimate??"")}"></div></label>
+      <div style="display:flex;align-items:flex-end"><button class="btn" id="dDone" style="width:100%">${b.status==="done"?"Update final price":"Mark job done"}</button></div></div>
+      <label class="f" for="dNote">Private notes <span style="font-weight:400">(only you see these)</span><textarea id="dNote" rows="3" placeholder="Gate code, dump receipt, tip…">${esc(b.internalNote||"")}</textarea></label>
+      <div class="actions"><button class="btn ghost small" id="dSaveNote">Save notes</button>
+      ${b.status!=="cancelled"?`<button class="btn ghost small" id="dCancel">Cancel job</button>`:`<button class="btn ghost small" id="dReopen">Reopen</button>`}
+      <button class="btn danger small" id="dDelete">Delete</button></div>
+      <p class="status" id="dStatus"></p>
+    </div>
+    <div class="card"><h3>History</h3><ul class="hist">${(b.history||[]).slice().reverse().map(h=>`<li><b>${esc(h.what)}</b> · ${new Date(h.at).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})}</li>`).join("")}</ul></div>
+  </div>`;
+  $("#dClose").onclick=closeDrawer;
+  $("#qAmt").addEventListener("input",()=>{const m=$("#qMsg");if(!q||m.dataset.touched!=="1")m.value=defaultMsg(b,$("#qAmt").value||0)});
+  $("#qMsg").addEventListener("input",e=>e.target.dataset.touched="1");
+  if(q)$("#qMsg").dataset.touched="1";
+  $("#qSend").onclick=()=>patch({quote:{amount:$("#qAmt").value,message:$("#qMsg").value}},"#qStatus","Quote saved. Now text or email it.");
+  if($("#qCopy"))$("#qCopy").onclick=async()=>{try{await navigator.clipboard.writeText(quoteLink(b));toast("Link copied")}catch(e){prompt("Copy this link",quoteLink(b))}};
+  $("#dSaveSched").onclick=()=>patch({date:$("#dDate").value,win:$("#dWin").value},"#dStatus","Schedule saved.");
+  $("#dSaveNote").onclick=()=>patch({internalNote:$("#dNote").value},"#dStatus","Notes saved.");
+  $("#dDone").onclick=()=>patch({status:"done",finalPrice:$("#dFinal").value||(q?.amount??b.estimate??"")},"#dStatus","Marked done.");
+  if($("#dCancel"))$("#dCancel").onclick=()=>confirmBtn($("#dCancel"),"Tap again to cancel",()=>patch({status:"cancelled"},"#dStatus","Job cancelled. The time slot is open again."));
+  if($("#dReopen"))$("#dReopen").onclick=()=>patch({status:b.quote?"quoted":"new"},"#dStatus","Reopened.");
+  $("#dDelete").onclick=()=>confirmBtn($("#dDelete"),"Tap again to delete for good",async()=>{
+    try{await api("/admin/bookings?id="+encodeURIComponent(b.id),{method:"DELETE"});BOOKINGS=BOOKINGS.filter(x=>x.id!==b.id);closeDrawer();renderBookings();toast("Booking deleted")}
+    catch(e){setStatus("#dStatus",e.message,true)}});
+  if(b.photos?.length)fillThumbs();
+}
+function confirmBtn(btn,label,fn){if(btn.dataset.armed){fn();return}btn.dataset.armed="1";const old=btn.textContent;btn.textContent=label;setTimeout(()=>{if(btn.isConnected){btn.textContent=old;delete btn.dataset.armed}},3500)}
+function setStatus(sel,m,err){const s=$(sel);if(!s)return;s.textContent=m;s.classList.toggle("err",!!err)}
+async function patch(fields,statusSel,okMsg){
+  setStatus(statusSel,"Saving…");
+  try{
+    const upd=await api("/admin/bookings",{method:"PATCH",body:JSON.stringify({id:CUR.id,...fields})});
+    BOOKINGS=BOOKINGS.map(b=>b.id===upd.id?upd:b);CUR=upd;renderDrawer();renderBookings();setStatus(statusSel,okMsg);toast(okMsg.split(".")[0]);
+  }catch(e){if(e.message!=="auth")setStatus(statusSel,e.message,true)}
+}
+async function loadPhotos(b){
+  for(const key of b.photos||[]){
+    try{const r=await fetch("/api/photo?key="+encodeURIComponent(key),{headers:{"x-admin-key":KEY}});if(!r.ok)continue;
+      const u=URL.createObjectURL(await r.blob());photoUrls.push(u);if(CUR===b)fillThumbs()}catch(e){}
+  }
+}
+function fillThumbs(){const t=$("#thumbs");if(!t)return;[...t.children].forEach((a,i)=>{if(photoUrls[i]){a.href=photoUrls[i];a.target="_blank";a.innerHTML=`<img src="${photoUrls[i]}" alt="Customer photo ${i+1}">`}})}
+
+/* ---------- website settings ---------- */
+async function loadSettings(){
+  setStatus("#sStatus","Loading…");
+  try{
+    let s=await api("/admin/settings");
+    if(!s){const html=await (await fetch("/",{cache:"no-store"})).text();s=JSON.parse(new DOMParser().parseFromString(html,"text/html").getElementById("site-data").textContent)}
+    SETTINGS=s;renderSettings();setStatus("#sStatus","Last updated "+(s.updated||"never")+".");
+  }catch(e){if(e.message!=="auth")setStatus("#sStatus","Couldn't load settings: "+e.message,true)}
+}
+const frac={0.125:"⅛ trailer",0.25:"¼ trailer",0.5:"½ trailer",1:"Full trailer"};
+const gsrc=k=>"/api/photo?key="+encodeURIComponent(k);
+function renderSettings(){
+  const s=SETTINGS;
+  $("#sLoads").innerHTML=s.loads.map((l,i)=>`<div class="prow"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><input id="ln${i}" value="${esc(l.name)}" aria-label="Load name"><span class="tag">${frac[l.frac]||""}</span></div>
+    <input class="pdesc" id="ld${i}" value="${esc(l.desc)}" aria-label="Description"><div class="money"><input id="lp${i}" type="number" inputmode="numeric" min="0" value="${l.price}" aria-label="Price"></div></div>`).join("");
+  drawExtras();
+  $("#sCity").value=s.area.city;$("#sMiles").value=s.area.freeMiles;$("#sTravel").value=s.area.travelFee;$("#sTowns").value=(s.area.towns||[]).join("\n");
+  $("#sAboutHead").value=s.about.head;$("#sAboutBody").value=s.about.body;$("#sSign").value=s.about.sign||"";
+  drawGallery();
+}
+function drawExtras(){
+  $("#sExtras").innerHTML=SETTINGS.extras.map((e,i)=>`<div class="erow"><input id="en${i}" value="${esc(e.name)}" aria-label="Fee name"><div class="money"><input id="ep${i}" type="number" inputmode="numeric" min="0" value="${e.price}" aria-label="Fee"></div><button class="x" type="button" data-rmx="${i}" aria-label="Remove fee">×</button></div>`).join("");
+  $$("[data-rmx]").forEach(b=>b.onclick=()=>{readForm();SETTINGS.extras.splice(+b.dataset.rmx,1);drawExtras()});
+}
+$("#addExtra").onclick=()=>{readForm();SETTINGS.extras.push({id:"x"+Date.now().toString(36),name:"New fee",price:0});drawExtras()};
+function drawGallery(){
+  const g=SETTINGS.gallery||[];
+  $("#sGallery").innerHTML=g.length?g.map((p,i)=>`<div class="gitem"><img src="${esc(gsrc(p.before))}" alt="Before"><img src="${esc(gsrc(p.after))}" alt="After"><span style="font-size:14px;min-width:0;overflow-wrap:anywhere">${esc(p.caption)||'<span class="muted">No caption</span>'}</span><button class="btn ghost small" type="button" data-rmg="${i}">Remove</button></div>`).join("")
+    :`<p class="muted" style="font-size:14px">No photos yet. The website shows "coming soon" boxes until you add some.</p>`;
+  $$("[data-rmg]").forEach(b=>b.onclick=()=>{readForm();SETTINGS.gallery.splice(+b.dataset.rmg,1);drawGallery();setStatus("#sStatus","Photo removed. Save to update the website.")});
+}
+function shrink(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const m=1600,k=Math.min(1,m/Math.max(im.width,im.height));const c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.78))};im.onerror=rej;im.src=r.result};r.onerror=rej;r.readAsDataURL(file)})}
+$("#gAdd").onclick=async()=>{
+  const b=$("#gBefore").files[0],a=$("#gAfter").files[0];
+  if(!b||!a)return setStatus("#sStatus","Choose both a before and an after photo.",true);
+  const btn=$("#gAdd");btn.disabled=true;setStatus("#sStatus","Uploading photos…");
+  try{
+    const [db,da]=await Promise.all([shrink(b),shrink(a)]);
+    const [kb,ka]=await Promise.all([api("/admin/photo",{method:"POST",body:JSON.stringify({dataUrl:db})}),api("/admin/photo",{method:"POST",body:JSON.stringify({dataUrl:da})})]);
+    readForm();(SETTINGS.gallery=SETTINGS.gallery||[]).push({before:kb.key,after:ka.key,caption:$("#gCap").value.trim()});
+    $("#gBefore").value="";$("#gAfter").value="";$("#gCap").value="";drawGallery();
+    setStatus("#sStatus","Photos uploaded. Save & publish to show them on the website.");
+  }catch(e){if(e.message!=="auth")setStatus("#sStatus",e.message||"Upload failed. Try a smaller photo.",true)}
+  btn.disabled=false;
+};
+function readForm(){
+  const s=SETTINGS,n=(id,d)=>{const el=$(id);if(!el)return d;const v=Math.round(+el.value);return Number.isFinite(v)&&v>=0&&el.value!==""?v:d};
+  s.loads.forEach((l,i)=>{l.name=$("#ln"+i).value.trim()||l.name;l.desc=$("#ld"+i).value.trim();l.price=n("#lp"+i,l.price)});
+  s.extras.forEach((e,i)=>{if(!$("#en"+i))return;e.name=$("#en"+i).value.trim()||e.name;e.price=n("#ep"+i,e.price)});
+  s.area={city:$("#sCity").value.trim()||s.area.city,freeMiles:n("#sMiles",s.area.freeMiles)||s.area.freeMiles,travelFee:n("#sTravel",0),towns:$("#sTowns").value.split(/[\n,]/).map(t=>t.trim()).filter(Boolean)};
+  s.about={head:$("#sAboutHead").value.trim()||s.about.head,body:$("#sAboutBody").value.trim()||s.about.body,sign:$("#sSign").value.trim()};
+}
+$("#sSave").onclick=async()=>{
+  readForm();const btn=$("#sSave");btn.disabled=true;setStatus("#sStatus","Publishing…");
+  try{SETTINGS=await api("/admin/settings",{method:"PUT",body:JSON.stringify(SETTINGS)});setStatus("#sStatus","Live on the website now.");toast("Website updated")}
+  catch(e){if(e.message!=="auth")setStatus("#sStatus",e.message,true)}
+  btn.disabled=false;
+};
+
+/* ---------- boot ---------- */
+if(KEY){api("/admin/check").then(start).catch(e=>{if(e.message!=="auth")logout(e.status===503?e.message:"")})}
+</script>
+</body>
+</html>
