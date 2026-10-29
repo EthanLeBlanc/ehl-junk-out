@@ -8,6 +8,8 @@
 <title>EHL Junk Out | Junk Removal in Brooklyn Park, MN</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style id="css">
 /* Layout: dark one-page site; hazard-stripe bands divide sections; the 15-yard trailer bed is the recurring pricing graphic. Dark-only by design. */
 :root{
@@ -136,6 +138,28 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rg
 
 /* area */
 .area{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.mapcard{background:var(--panel);border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+#map{height:420px;background:var(--panel2)}
+@media (max-width:560px){#map{height:340px}}
+.checker{padding:16px;display:flex;flex-direction:column;gap:8px}
+.checkrow{display:flex;gap:8px}
+.checkrow input{min-width:0;flex:1}
+.checkrow .btn{padding:12px 18px;flex:none}
+.checkres{font-size:15px;min-height:24px;color:var(--muted)}
+.checkres.yes{color:var(--good)}.checkres.no{color:var(--warn)}
+.checkres b{color:var(--fg)}
+.towns button{appearance:none;background:var(--panel);border:1px solid var(--line);color:var(--fg);border-radius:999px;padding:6px 14px;font:600 15px var(--body);cursor:pointer}
+.towns button:hover,.towns button[aria-pressed="true"]{border-color:var(--amber);color:var(--amber)}
+.leaflet-container{font-family:var(--body);background:var(--panel2)}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--bg);color:var(--fg);border:1px solid var(--line)}
+.leaflet-popup-content{margin:10px 14px;font-size:14px}
+.leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
+.leaflet-control-attribution{background:rgba(17,20,25,.8)!important;color:var(--muted)!important}
+.leaflet-control-attribution a{color:var(--muted)!important}
+.leaflet-bar a{background:var(--panel);color:var(--fg);border-color:var(--line)}
+.leaflet-bar a:hover{background:var(--panel2);color:var(--amber)}
+.tdot{width:12px;height:12px;border-radius:50%;background:var(--fg);border:3px solid var(--bg);box-shadow:0 0 0 1.5px var(--amber)}
+.hbase{width:22px;height:22px;border-radius:6px;background:repeating-linear-gradient(-45deg,var(--amber) 0 4px,var(--amber-ink) 4px 8px);border:2px solid var(--amber);box-shadow:0 0 0 4px rgba(255,176,32,.25)}
 .radius{position:relative;aspect-ratio:1;max-width:100%;width:min(100%,420px);justify-self:center;display:grid;place-items:center}
 .radius span{position:absolute;border-radius:50%;border:2px dashed var(--line)}
 .radius span:nth-child(1){inset:0;border-color:rgba(255,176,32,.3)}
@@ -376,7 +400,15 @@ footer{border-top:1px solid var(--line);padding-block:40px;font-size:14px;color:
       <div class="towns" id="towns"></div>
       <div class="fees" id="areaFees"></div>
     </div>
-    <div class="radius" aria-hidden="true"><span></span><span></span>
+    <div class="mapcard" id="mapcard" hidden>
+      <div id="map" role="region" aria-label="Map of our service area"></div>
+      <form class="checker" id="checker">
+        <label for="where" class="lbl">Is your address covered?</label>
+        <div class="checkrow"><input id="where" placeholder="City, ZIP, or street address" autocomplete="street-address"><button class="btn" type="submit" id="checkBtn">Check</button></div>
+        <p class="checkres" id="checkRes" aria-live="polite">Tap a town or search your address.</p>
+      </form>
+    </div>
+    <div class="radius" id="radiusFallback" aria-hidden="true"><span></span><span></span>
       <span class="lab in" id="rIn"></span><span class="lab out" id="rOut"></span>
       <div class="pin"><svg width="28" height="28" viewBox="0 0 24 24" fill="var(--amber)"><path d="M12 2a7 7 0 00-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg><b id="rCity"></b><span class="muted" style="font-size:13px">Home base</span></div>
     </div>
@@ -584,7 +616,8 @@ function renderArea(){
   const a=DATA.area;
   $("#areaHead").textContent="Based in "+a.city+".";
   $("#areaNote").textContent=a.towns.length?"We work anywhere within "+a.freeMiles+" miles of "+a.city+", including:":"Our full town list is coming soon. Book anyway and we'll confirm we can reach you.";
-  $("#towns").innerHTML=a.towns.map(t=>`<span>${esc(t)}</span>`).join("");
+  $("#towns").innerHTML=a.towns.map(t=>`<button type="button" data-town="${esc(t)}" aria-pressed="false">${esc(t)}</button>`).join("");
+  $$("#towns button").forEach(b=>b.onclick=()=>focusTown(b.dataset.town));
   $("#areaFees").innerHTML=`<div><span>Within ${a.freeMiles} miles of ${esc(a.city)}</span><b>No travel fee</b></div><div><span>Farther than ${a.freeMiles} miles</span><b${a.travelFee?' class="mono"':""}>${a.travelFee?"+$"+a.travelFee:"Ask us"}</b></div>`;
   $("#rCity").textContent=a.city;$("#rIn").textContent=a.freeMiles+" mi · free";$("#rOut").textContent=a.travelFee?"+$"+a.travelFee+" beyond":"Farther out? Ask us";
   $("#footArea").textContent="Based in "+a.city;
@@ -594,6 +627,62 @@ function renderAbout(){
   $("#aboutBody").innerHTML=DATA.about.body.split(/\n\s*\n/).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join("");
   $("#aboutSign").textContent=DATA.about.sign?"— "+DATA.about.sign:"";
 }
+/* ---------- service area map ---------- */
+const HOME=[45.0941,-93.3563];
+const TOWN_COORDS={"Brooklyn Park":[45.0941,-93.3563],"Brooklyn Center":[45.0761,-93.3327],"Maple Grove":[45.0725,-93.4558],"Champlin":[45.1889,-93.3975],"Osseo":[45.1194,-93.4024],"Coon Rapids":[45.12,-93.2878],"Anoka":[45.1977,-93.3872],"Blaine":[45.1608,-93.2349],"Fridley":[45.0861,-93.2633],"Plymouth":[45.0105,-93.4555],"Minneapolis":[44.9778,-93.265],"St. Paul":[44.9537,-93.09],"Minnetonka":[44.9211,-93.4687],"Bloomington":[44.8408,-93.2983],"Eden Prairie":[44.8547,-93.4708],"Elk River":[45.3039,-93.5672]};
+const MI=1609.344;
+let map=null,townLayers={},searchPin=null;
+function milesFromHome(lat,lng){return map?map.distance(HOME,[lat,lng])/MI:null}
+function initMap(){
+  if(!window.L||!$("#map"))return;
+  const a=DATA.area;
+  $("#mapcard").hidden=false;$("#radiusFallback").hidden=true;
+  map=L.map("map",{scrollWheelZoom:false,zoomControl:true,attributionControl:true}).setView(HOME,8);
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{maxZoom:18,subdomains:"abcd",
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'}).addTo(map);
+  const amber=getComputedStyle(document.documentElement).getPropertyValue("--amber").trim()||"#ffb020";
+  const circle=L.circle(HOME,{radius:a.freeMiles*MI,color:amber,weight:2.5,fillColor:amber,fillOpacity:.12,dashArray:"8 6"}).addTo(map);
+  map.fitBounds(circle.getBounds(),{padding:[12,12]});
+  L.marker(HOME,{icon:L.divIcon({className:"",html:'<div class="hbase"></div>',iconSize:[22,22],iconAnchor:[11,11]}),zIndexOffset:1000,title:"Home base"})
+    .addTo(map).bindPopup(`<b>Home base: ${esc(a.city)}</b><br>We cover everything within ${a.freeMiles} miles.`);
+  a.towns.forEach(t=>{const c=TOWN_COORDS[t];if(!c||t==="Brooklyn Park")return;
+    const mi=milesFromHome(c[0],c[1]);
+    townLayers[t]=L.marker(c,{icon:L.divIcon({className:"",html:'<div class="tdot"></div>',iconSize:[12,12],iconAnchor:[6,6]}),title:t})
+      .addTo(map).bindPopup(`<b>${esc(t)}</b><br>${mi.toFixed(0)} miles from ${esc(a.city.split(",")[0])} · We cover it`);
+  });
+  setTimeout(()=>map.invalidateSize(),200);
+}
+function focusTown(t){
+  $$("#towns button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.town===t));
+  if(!map)return;
+  const c=t==="Brooklyn Park"?HOME:TOWN_COORDS[t];if(!c)return;
+  map.flyTo(c,11,{duration:.8});
+  const m=townLayers[t];if(m)setTimeout(()=>m.openPopup(),850);
+  const res=$("#checkRes");res.className="checkres yes";res.innerHTML=`Yes, we cover <b>${esc(t)}</b>.`;
+}
+$("#checker").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const q=$("#where").value.trim(),res=$("#checkRes"),btn=$("#checkBtn");
+  if(!q){res.className="checkres no";res.textContent="Type a city, ZIP, or address first.";return}
+  btn.disabled=true;res.className="checkres";res.textContent="Looking it up…";
+  try{
+    const r=await fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q="+encodeURIComponent(q.match(/\b(mn|minnesota|wi|wisconsin)\b/i)?q:q+", Minnesota"),{headers:{"Accept":"application/json"}});
+    const j=await r.json();
+    if(!j.length){res.className="checkres no";res.textContent="We couldn't find that place. Try a city name or ZIP code.";}
+    else{
+      const lat=+j[0].lat,lng=+j[0].lon,mi=milesFromHome(lat,lng),name=j[0].display_name.split(",").slice(0,2).join(",");
+      const ok=mi<=DATA.area.freeMiles;
+      if(searchPin)searchPin.remove();
+      searchPin=L.marker([lat,lng]).addTo(map).bindPopup(`<b>${esc(name)}</b><br>${mi.toFixed(0)} miles away`);
+      map.flyTo([lat,lng],ok?10:8,{duration:.8});setTimeout(()=>searchPin.openPopup(),850);
+      res.className="checkres "+(ok?"yes":"no");
+      res.innerHTML=ok?`Yes! <b>${esc(name)}</b> is about ${mi.toFixed(0)} miles away, inside our area. <a href="#book">Book a pickup</a>`
+        :`<b>${esc(name)}</b> is about ${mi.toFixed(0)} miles away, outside our ${DATA.area.freeMiles}-mile area. Ask us anyway: we may still be able to come.`;
+    }
+  }catch(err){res.className="checkres no";res.textContent="Couldn't look that up right now. Try again in a moment."}
+  btn.disabled=false;
+});
+
 function renderAll(){renderPricing();renderGallery();renderArea();renderAbout();renderAside()}
 
 /* ---------- hero estimator ---------- */
@@ -737,6 +826,7 @@ $("#dSave").onclick=async()=>{
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#drawer").hidden)closeDrawer()});
 
 renderAll();
+try{initMap()}catch(e){$("#mapcard").hidden=true;$("#radiusFallback").hidden=false}
 (async()=>{
   if(!window.claude||!claude.use)return;
   const [art,user,assets]=await Promise.all([claude.use("artifact"),claude.use("user"),claude.use("assets")]);
