@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="EHL Junk Out: junk removal and cleanouts. Furniture, appliances, yard waste, garage cleanouts. Book a pickup online.">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>EHL Junk Out</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style id="css">
+/* Layout: dark one-page site; hazard-stripe bands divide sections; the 15-yard trailer bed is the recurring pricing graphic. Dark-only by design. */
+:root{
+  --bg:#111419; --band:#161a20; --panel:#1c212a; --panel2:#252c37; --line:#323b48;
+  --fg:#eef1f4; --muted:#97a3b3; --amber:#ffb020; --amber-2:#e89c10; --amber-ink:#1a1204; --warn:#ff8a4c; --good:#4fd18b;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Figtree",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+section{padding-block:72px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.02em}
+h1{font-size:clamp(40px,7vw,76px);font-weight:800;line-height:.98}
+h2{font-size:clamp(30px,4.4vw,46px);font-weight:800;line-height:1.05}
+h3{font-size:19px;font-weight:700;letter-spacing:-.01em}
+p{margin:0}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--amber);font-weight:700}
+.lead{font-size:18px;color:var(--muted);max-width:52ch}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.sechead{display:flex;flex-direction:column;gap:12px;margin-bottom:36px;max-width:640px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+
+.btn{appearance:none;border:none;background:var(--amber);color:var(--amber-ink);font:700 16px var(--body);padding:15px 24px;border-radius:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .15s,background .15s}
+.btn:hover{background:#ffc04a}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:transparent;color:var(--fg);border:1.5px solid var(--line)}
+.btn.ghost:hover{border-color:var(--muted)}
+.btn.small{padding:9px 14px;font-size:14px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(17,20,25,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:24px;height:68px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font:800 20px var(--display);letter-spacing:-.02em;white-space:nowrap}
+.mark{width:30px;height:30px;border-radius:8px;background:repeating-linear-gradient(-45deg,var(--amber) 0 6px,var(--amber-ink) 6px 12px);flex:none}
+.links{display:flex;gap:20px;margin-left:auto}
+.links a{text-decoration:none;color:var(--muted);font-weight:600;font-size:15px;white-space:nowrap}
+.links a:hover{color:var(--fg)}
+.nav .btn{padding:11px 18px;font-size:15px}
+@media (max-width:1000px){.links{display:none}.nav .btn{margin-left:auto}}
+
+.hero{padding-block:56px 72px}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+.hero-copy{display:flex;flex-direction:column;gap:22px;min-width:0}
+.hero h1 em{font-style:normal;color:var(--amber)}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+.trust{display:flex;gap:28px;flex-wrap:wrap;padding-top:6px}
+.trust div{display:flex;flex-direction:column}
+.trust b{font:800 24px var(--display)}
+.trust span{font-size:13px;color:var(--muted)}
+@media (max-width:900px){.hero-grid{grid-template-columns:1fr;gap:36px}}
+
+.est{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.est-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.bed{position:relative;height:110px;border:3px solid var(--muted);border-top:none;border-radius:0 0 12px 12px;background:var(--panel2);overflow:hidden}
+.bed .fill{position:absolute;left:0;top:0;bottom:0;background:repeating-linear-gradient(90deg,var(--amber) 0 26px,var(--amber-2) 26px 28px);transition:width .4s cubic-bezier(.3,1.3,.5,1)}
+.bed .ticks{position:absolute;inset:0;display:flex}
+.bed .ticks span{flex:1;border-right:1px dashed rgba(255,255,255,.2)}
+.bed .ticks span:last-child{border:none}
+.wheels{display:flex;justify-content:space-between;padding:0 14%;margin-top:-10px}
+.wheels i{width:26px;height:26px;border-radius:50%;background:var(--panel2);border:4px solid var(--muted)}
+.bedlabels{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.chip{appearance:none;border:1.5px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:10px;padding:11px 4px;font:700 14px var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--amber);color:var(--amber-ink);border-color:var(--amber)}
+.est-price{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line);padding-top:14px}
+.big{font:800 40px var(--display);color:var(--amber);letter-spacing:-.02em}
+
+.hazard{height:14px;background:repeating-linear-gradient(-45deg,var(--amber) 0 14px,var(--bg) 14px 28px);opacity:.9}
+.band{background:var(--band)}
+
+.items{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.item{background:var(--panel);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.item svg{width:32px;height:32px;color:var(--amber);margin-bottom:4px}
+.item p{font-size:14px;color:var(--muted)}
+.nope{margin-top:20px;display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted)}
+.nope b{color:var(--fg)}
+.nope span{border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+@media (max-width:900px){.items{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:420px){.item{padding:16px}}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.step-c{display:flex;flex-direction:column;gap:10px;border-top:2px solid var(--line);padding-top:20px;min-width:0}
+.step-c .n{font:500 13px var(--mono);color:var(--amber)}
+.step-c p{color:var(--muted)}
+@media (max-width:760px){.steps{grid-template-columns:1fr;gap:22px}}
+
+/* gallery */
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.ba{display:flex;flex-direction:column;gap:10px;min-width:0}
+.cmp{position:relative;aspect-ratio:4/3;max-width:100%;border-radius:16px;overflow:hidden;background:var(--panel2);user-select:none;touch-action:pan-y}
+.cmp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;max-width:none}
+.cmp .before{clip-path:inset(0 50% 0 0)}
+.cmp .bar{position:absolute;top:0;bottom:0;left:50%;width:3px;margin-left:-1.5px;background:var(--amber);pointer-events:none}
+.cmp .knob{position:absolute;top:50%;left:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:var(--amber);color:var(--amber-ink);display:grid;place-items:center;font-weight:800;pointer-events:none;font-size:14px}
+.cmp input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+.cmp .lb{position:absolute;top:12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;background:rgba(17,20,25,.75);padding:4px 10px;border-radius:999px;pointer-events:none}
+.cmp .lb.l{left:12px}.cmp .lb.r{right:12px}
+.ba p{font-size:15px}
+.ph{aspect-ratio:4/3;max-width:100%;border-radius:16px;border:2px dashed var(--line);display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+.ph div{display:grid;place-items:center;font:700 13px var(--body);text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.ph div:first-child{background:repeating-linear-gradient(-45deg,var(--panel) 0 12px,var(--band) 12px 24px);border-right:2px dashed var(--line)}
+@media (max-width:700px){.gallery{grid-template-columns:1fr}}
+
+.loads{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.load{background:var(--panel);border:1.5px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.load.pop{border-color:var(--amber)}
+.minibed{height:40px;border:2.5px solid var(--muted);border-top:none;border-radius:0 0 7px 7px;position:relative;overflow:hidden}
+.minibed i{position:absolute;left:0;top:0;bottom:0;background:var(--amber)}
+.load .price{font:800 34px var(--display);letter-spacing:-.02em}
+.load .yd{font:500 12px var(--mono);color:var(--muted)}
+.load p{font-size:14px;color:var(--muted)}
+.tag{align-self:flex-start;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:var(--amber);color:var(--amber-ink);padding:3px 9px;border-radius:999px}
+.extras{margin-top:24px;display:grid;grid-template-columns:auto 1fr;gap:16px 28px;align-items:start;background:var(--panel);border-radius:18px;padding:22px}
+.extras ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px 24px}
+.extras li{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed var(--line);padding:6px 0;font-size:15px}
+.updated{margin-top:14px;font:500 12px var(--mono);color:var(--muted)}
+@media (max-width:900px){.loads{grid-template-columns:repeat(2,1fr)}.extras{grid-template-columns:1fr}}
+@media (max-width:460px){.loads{grid-template-columns:1fr}}
+
+/* area */
+.area{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.radius{position:relative;aspect-ratio:1;max-width:100%;width:min(100%,420px);justify-self:center;display:grid;place-items:center}
+.radius span{position:absolute;border-radius:50%;border:2px dashed var(--line)}
+.radius span:nth-child(1){inset:0;border-color:rgba(255,176,32,.3)}
+.radius span:nth-child(2){inset:22%;border-style:solid;border-color:var(--amber);background:rgba(255,176,32,.08)}
+.radius .pin{position:relative;text-align:center;display:flex;flex-direction:column;gap:4px;align-items:center;padding:0 16px}
+.radius .pin b{font:800 26px var(--display);overflow-wrap:anywhere}
+.radius .lab{position:absolute;font:500 12px var(--mono);color:var(--muted);background:var(--bg);padding:0 6px}
+.radius .lab.in{top:22%;transform:translateY(-50%);color:var(--amber)}
+.radius .lab.out{top:0;transform:translateY(-50%)}
+.towns{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.towns span{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:600;font-size:15px}
+.fees{margin-top:22px;display:flex;flex-direction:column;gap:0;background:var(--panel);border-radius:16px;padding:6px 18px}
+.fees div{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.fees div:last-child{border:none}
+@media (max-width:800px){.area{grid-template-columns:1fr}}
+
+/* about */
+.about{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:start}
+.about-body{display:flex;flex-direction:column;gap:16px;font-size:17px;max-width:60ch}
+.about-body p{color:var(--muted)}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+.facts div{border-top:2px solid var(--amber);padding-top:10px;display:flex;flex-direction:column;gap:2px}
+.facts b{font:700 16px var(--display)}
+.facts span{font-size:13px;color:var(--muted)}
+.sign{font:700 16px var(--display);color:var(--fg)}
+@media (max-width:800px){.about{grid-template-columns:1fr;gap:20px}.facts{grid-template-columns:1fr}}
+
+/* booking */
+.book-grid{display:grid;grid-template-columns:1fr 320px;gap:28px;align-items:start}
+.wizard{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:28px;min-width:0}
+.wstep{display:flex;flex-direction:column;gap:18px}
+.prog{display:flex;gap:6px}
+.prog span{flex:1;height:5px;border-radius:9px;background:var(--line);transition:background .3s}
+.prog span.on{background:var(--amber)}
+.stepnum{font:500 12px var(--mono);color:var(--amber)}
+.wstep h3{font-size:clamp(24px,3vw,30px);font-weight:800;margin-top:4px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tile{appearance:none;text-align:left;border:1.5px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px;cursor:pointer;font:700 15px var(--body);position:relative;min-width:0}
+.tile svg{width:26px;height:26px;color:var(--amber)}
+.tile small{font-weight:400;color:var(--muted);font-size:12px;line-height:1.3}
+.tile[aria-pressed="true"],.size[aria-pressed="true"],.slot[aria-pressed="true"]{border-color:var(--amber);background:rgba(255,176,32,.1)}
+.tile[aria-pressed="true"]::after{content:"✓";position:absolute;top:9px;right:9px;width:22px;height:22px;border-radius:50%;background:var(--amber);color:var(--amber-ink);display:grid;place-items:center;font-size:13px;font-weight:800}
+@media (max-width:700px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.sizes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.size{appearance:none;border:1.5px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:14px;padding:14px;display:grid;grid-template-columns:64px 1fr;gap:6px 14px;align-items:center;cursor:pointer;text-align:left;font:inherit;min-width:0}
+.size .minibed{grid-row:1/4;height:32px}
+.size b{font-size:16px}
+.size small{color:var(--muted);font-size:13px;grid-column:2}
+.size .from{grid-column:2;font:500 13px var(--mono);color:var(--amber)}
+@media (max-width:560px){.sizes{grid-template-columns:1fr}}
+.days{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+.day{appearance:none;flex:none;width:64px;border:1.5px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:14px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;font:500 12px var(--body)}
+.day b{font:800 22px var(--display)}
+.day[aria-pressed="true"]{background:var(--amber);color:var(--amber-ink);border-color:var(--amber)}
+.day:disabled{opacity:.35;cursor:not-allowed}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.slot{appearance:none;border:1.5px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:14px;padding:14px 12px;cursor:pointer;font:700 15px var(--body);display:flex;flex-direction:column;gap:2px;align-items:flex-start}
+.slot small{font-weight:400;color:var(--muted);font-size:12px}
+.slot:disabled{opacity:.4;cursor:not-allowed}
+@media (max-width:700px){.slots{grid-template-columns:1fr 1fr}}
+.lbl{font-size:13px;color:var(--muted);font-weight:600}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fields .full{grid-column:1/-1}
+label.f{font-size:13px;color:var(--muted);font-weight:600;display:flex;flex-direction:column;gap:6px;min-width:0}
+input,textarea{background:var(--panel2);border:1.5px solid var(--line);color:var(--fg);border-radius:10px;padding:12px;font:16px var(--body);width:100%}
+input:focus,textarea:focus{border-color:var(--amber);outline:none}
+textarea{resize:vertical;min-height:80px}
+@media (max-width:560px){.fields{grid-template-columns:1fr}}
+.photos{display:flex;gap:8px;flex-wrap:wrap}
+.photos img{width:64px;height:64px;object-fit:cover;border-radius:10px}
+.addphoto{width:64px;height:64px;border:1.5px dashed var(--line);border-radius:10px;display:grid;place-items:center;color:var(--muted);font-size:26px;cursor:pointer;position:relative}
+.addphoto input{position:absolute;inset:0;opacity:0;cursor:pointer;padding:0}
+.hint{font-size:14px;color:var(--warn);min-height:20px}
+.wnav{display:flex;gap:10px;justify-content:space-between}
+.wnav .btn{min-width:120px}
+.sumrow{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.sumrow:last-child{border:none}
+.sumrow .k{color:var(--muted);font-size:14px;flex:none}
+.sumrow .v{text-align:right;font-weight:600;min-width:0;overflow-wrap:anywhere}
+.edit{appearance:none;background:none;border:none;color:var(--amber);font:600 13px var(--body);padding:2px 0 0;cursor:pointer;display:block;margin-left:auto}
+.aside{background:var(--band);border:1px solid var(--line);border-radius:22px;padding:22px;position:sticky;top:90px;display:flex;flex-direction:column;gap:6px}
+.aside .big{font-size:36px}
+@media (max-width:900px){.book-grid{grid-template-columns:1fr}.aside{display:none}}
+@media (max-width:460px){.wizard{padding:20px}}
+.done{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding-block:10px}
+.check{width:84px;height:84px;border-radius:50%;background:var(--amber);display:grid;place-items:center}
+.check svg{width:44px;height:44px;stroke:var(--amber-ink);stroke-width:3.5;fill:none;stroke-dasharray:40;stroke-dashoffset:40;animation:draw .5s .15s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+.faq{display:grid;grid-template-columns:.8fr 1.2fr;gap:48px}
+details{border-bottom:1px solid var(--line);padding-block:18px}
+summary{cursor:pointer;font:700 18px var(--display);list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--amber);font-size:24px;line-height:1;transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--muted);padding-top:10px;max-width:60ch}
+@media (max-width:800px){.faq{grid-template-columns:1fr;gap:20px}}
+
+.cta{background:var(--amber);color:var(--amber-ink);border-radius:26px;padding:44px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;position:relative;overflow:hidden}
+.cta h2{color:var(--amber-ink);max-width:16ch}
+.cta .btn{background:var(--amber-ink);color:var(--amber);position:relative;z-index:1}
+.cta::after{content:"";position:absolute;right:-40px;top:0;bottom:0;width:160px;background:repeating-linear-gradient(-45deg,rgba(0,0,0,.12) 0 16px,transparent 16px 32px);pointer-events:none}
+@media (max-width:460px){.cta{padding:28px}}
+footer{border-top:1px solid var(--line);padding-block:40px;font-size:14px;color:var(--muted)}
+.foot{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:28px}
+.foot h4{margin:0 0 8px;color:var(--fg);font:700 14px var(--body);text-transform:uppercase;letter-spacing:.1em}
+.foot a{text-decoration:none}
+.foot a:hover{color:var(--fg)}
+.foot ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.concept{margin-top:28px;font-size:12px;border:1px dashed var(--line);border-radius:10px;padding:10px 14px}
+@media (max-width:700px){.foot{grid-template-columns:1fr}}
+
+/* owner editor */
+.ownerbtn{position:fixed;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:25;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--band);border-left:1px solid var(--line);z-index:40;display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.5)}
+.dhead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(16px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) 16px 20px;border-bottom:1px solid var(--line)}
+.dbody{flex:1;overflow-y:auto;padding:20px max(20px,env(safe-area-inset-right,0px)) 20px 20px;display:flex;flex-direction:column;gap:26px}
+.dfoot{padding:14px max(20px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) 20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.dsec{display:flex;flex-direction:column;gap:12px}
+.dsec h4{margin:0;font:700 13px var(--body);text-transform:uppercase;letter-spacing:.12em;color:var(--amber)}
+.prow{display:grid;grid-template-columns:1fr 110px;gap:10px;align-items:center;font-size:15px}
+.money{position:relative}
+.money::before{content:"$";position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.money input{padding-left:24px;font-family:var(--mono)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gitem{display:grid;grid-template-columns:56px 56px 1fr auto;gap:8px;align-items:center;background:var(--panel);border-radius:12px;padding:8px}
+.gitem img{width:56px;height:56px;object-fit:cover;border-radius:8px}
+.upl{display:flex;flex-direction:column;gap:10px;background:var(--panel);border-radius:12px;padding:12px}
+.upl .two label{font-size:13px;color:var(--muted);font-weight:600;display:flex;flex-direction:column;gap:6px}
+.upl input[type=file]{padding:8px;font-size:13px}
+.dstatus{font-size:13px;color:var(--muted);min-height:18px}
+.dstatus.err{color:var(--warn)}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:39}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;z-index:50;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.bed .fill{transition:none}.check svg{animation:none;stroke-dashoffset:0}}
+</style>
+</head>
+<body>
+<div id="app">
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#top"><span class="mark"></span>EHL Junk Out</a>
+    <nav class="links" aria-label="Main">
+      <a href="#services">What we take</a><a href="#pricing">Pricing</a><a href="#work">Our work</a><a href="#area">Service area</a><a href="#about">About</a><a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn" href="#book">Book a pickup</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow">Junk removal · Same-week pickup</span>
+      <h1>Got junk?<br><em>We'll haul it out.</em></h1>
+      <p class="lead">Couches, fridges, garage piles, yard debris. Point at it and our two-person crew loads it, hauls it, and sweeps up after. You pay by how much space it takes in the trailer.</p>
+      <div class="ctas"><a class="btn" href="#book">Book a pickup</a><a class="btn ghost" href="#pricing">See prices</a></div>
+      <div class="trust">
+        <div><b>$0</b><span>to book</span></div>
+        <div><b>2 hr</b><span>arrival window</span></div>
+        <div><b>We lift</b><span>you don't</span></div>
+      </div>
+    </div>
+    <div class="est" aria-label="Quick price estimate">
+      <div class="est-top"><h3>How much stuff?</h3><span class="mono muted" id="hYards"></span></div>
+      <div>
+        <div class="bed"><div class="fill" id="hFill" style="width:25%"></div><div class="ticks"><span></span><span></span><span></span><span></span></div></div>
+        <div class="wheels"><i></i><i></i></div>
+      </div>
+      <div class="bedlabels"><span>Cab end</span><span>15 yd³ trailer</span><span>Tailgate</span></div>
+      <div class="seg" id="hLoads">
+        <button class="chip" data-i="0" aria-pressed="false">⅛</button>
+        <button class="chip" data-i="1" aria-pressed="true">¼</button>
+        <button class="chip" data-i="2" aria-pressed="false">½</button>
+        <button class="chip" data-i="3" aria-pressed="false">Full</button>
+      </div>
+      <div class="est-price"><div><div class="eyebrow" style="color:var(--muted)">Estimate</div><span class="muted" style="font-size:13px">Labor, hauling &amp; dump fees included</span></div><span class="big mono" id="hPrice"></span></div>
+      <a class="btn" href="#book" id="hBook">Book this size</a>
+    </div>
+  </div>
+</section>
+
+<div class="hazard" aria-hidden="true"></div>
+
+<section class="band" id="services">
+  <div class="wrap">
+    <div class="sechead"><span class="eyebrow">What we take</span><h2>If two people can lift it, it's probably going.</h2></div>
+    <div class="items">
+      <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11V8a2 2 0 012-2h12a2 2 0 012 2v3M3 11h18v5H3zM5 16v2M19 16v2"/></svg><h3>Furniture</h3><p>Couches, sectionals, recliners, dressers, desks, tables.</p></div>
+      <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 8v8M3 12h18"/></svg><h3>Mattresses</h3><p>Any size, plus box springs and bed frames.</p></div>
+      <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M6 9h12M9 6h2"/></svg><h3>Appliances</h3><p>Fridges, freezers, washers, dryers, water heaters.</p></div>
+      <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="12" rx="1.5"/><path d="M9 21h6M12 17v4"/></svg><h3>Electronics</h3><p>TVs, computers, printers, stereo gear.</p></div>
+      <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-6 9 6M5 10v10h14V10M10 20v-5h4v5"/></svg><h3>Cleanouts</h3><p>Garages, basements, attics, estates, rental move-outs.</p></div>
+      <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21V11M12 11c-4 0-6-3-6-7 4 0 6 3 6 7zM12 14c3 0 5-2 5-5-3 0-5 2-5 5z"/></svg><h3>Yard waste</h3><p>Branches, brush, old fencing, landscaping debris.</p></div>
+      <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 20h18M5 20v-6h6v6M13 20V9h6v11M7 14V10M15 9V5"/></svg><h3>Construction debris</h3><p>Drywall, lumber, flooring, cabinets from small remodels.</p></div>
+      <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8v8"/></svg><h3>Hot tubs &amp; sheds</h3><p>We cut down, break apart, and haul everything off.</p></div>
+    </div>
+    <div class="nope"><b>We can't take:</b><span>Paint &amp; solvents</span><span>Chemicals</span><span>Asbestos</span><span>Medical waste</span><span>Propane tanks</span></div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="sechead"><span class="eyebrow">How it works</span><h2>Three steps. You don't lift a thing.</h2></div>
+    <div class="steps">
+      <div class="step-c"><span class="n">Step 1</span><h3>Book online</h3><p>Tell us what's going and pick a 2-hour arrival window. Booking is free.</p></div>
+      <div class="step-c"><span class="n">Step 2</span><h3>We show up and quote</h3><p>We text 30 minutes before we arrive, look at the pile, and confirm the price before anything gets loaded.</p></div>
+      <div class="step-c"><span class="n">Step 3</span><h3>We haul it out</h3><p>We load, sweep up, and take usable items to donation and the rest to recycling or the dump. You pay when it's gone.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="pricing">
+  <div class="wrap">
+    <div class="sechead"><span class="eyebrow">Pricing</span><h2>You pay for the space your junk takes up.</h2><p class="lead">Our trailer holds 15 cubic yards. Every price includes loading, hauling, and dump fees.</p></div>
+    <div class="loads" id="loadCards"></div>
+    <div class="extras">
+      <div><h3>Extra fees</h3><p class="muted" style="font-size:14px;margin-top:4px">Some items cost more to dispose of.</p></div>
+      <ul id="extrasList"></ul>
+    </div>
+    <p class="updated" id="updated"></p>
+  </div>
+</section>
+
+<section id="work">
+  <div class="wrap">
+    <div class="sechead"><span class="eyebrow">Our work</span><h2>Before &amp; after.</h2><p class="lead">Drag the slider to see the difference.</p></div>
+    <div class="gallery" id="gallery"></div>
+  </div>
+</section>
+
+<div class="hazard" aria-hidden="true"></div>
+
+<section class="band" id="area">
+  <div class="wrap area">
+    <div style="min-width:0">
+      <div class="sechead" style="margin-bottom:0"><span class="eyebrow">Service area</span><h2 id="areaHead"></h2><p class="lead" id="areaNote"></p></div>
+      <div class="towns" id="towns"></div>
+      <div class="fees" id="areaFees"></div>
+    </div>
+    <div class="radius" aria-hidden="true"><span></span><span></span>
+      <span class="lab in" id="rIn"></span><span class="lab out" id="rOut"></span>
+      <div class="pin"><svg width="28" height="28" viewBox="0 0 24 24" fill="var(--amber)"><path d="M12 2a7 7 0 00-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg><b id="rCity"></b><span class="muted" style="font-size:13px">Home base</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap about">
+    <div class="sechead" style="margin:0"><span class="eyebrow">About us</span><h2 id="aboutHead"></h2></div>
+    <div class="about-body">
+      <div id="aboutBody" style="display:flex;flex-direction:column;gap:14px"></div>
+      <span class="sign" id="aboutSign"></span>
+      <div class="facts">
+        <div><b>Two-person crew</b><span>We do all the lifting</span></div>
+        <div><b>Donate first</b><span>The dump is the last stop</span></div>
+        <div><b>Pay after</b><span>Once it's gone</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="book">
+  <div class="wrap">
+    <div class="sechead"><span class="eyebrow">Book a pickup</span><h2>Book in about a minute.</h2></div>
+    <div class="book-grid">
+      <div class="wizard">
+        <div class="wstep" data-step="1">
+          <div class="prog"><span></span><span></span><span></span><span></span></div>
+          <div><span class="stepnum">Step 1 of 4</span><h3>What's going?</h3><p class="muted">Tap everything that applies.</p></div>
+          <div class="tiles" id="cItems">
+            <button class="tile" data-item="Furniture" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11V8a2 2 0 012-2h12a2 2 0 012 2v3M3 11h18v5H3zM5 16v2M19 16v2"/></svg>Furniture<small>Couches, tables</small></button>
+            <button class="tile" data-item="Mattress" data-fee="mattress" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 8v8M3 12h18"/></svg>Mattress<small data-feelabel="mattress"></small></button>
+            <button class="tile" data-item="Appliances" data-fee="fridge" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M6 9h12M9 6h2"/></svg>Appliances<small>Fridge, washer</small></button>
+            <button class="tile" data-item="Electronics" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="12" rx="1.5"/><path d="M9 21h6M12 17v4"/></svg>Electronics<small>TVs, computers</small></button>
+            <button class="tile" data-item="Boxes & bags" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8l9-4 9 4v9l-9 4-9-4z"/><path d="M3 8l9 4 9-4M12 12v9"/></svg>Boxes &amp; bags<small>Household junk</small></button>
+            <button class="tile" data-item="Yard waste" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21V11M12 11c-4 0-6-3-6-7 4 0 6 3 6 7zM12 14c3 0 5-2 5-5-3 0-5 2-5 5z"/></svg>Yard waste<small>Brush, fencing</small></button>
+            <button class="tile" data-item="Construction debris" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 20h18M5 20v-6h6v6M13 20V9h6v11M7 14V10M15 9V5"/></svg>Construction<small>Drywall, wood</small></button>
+            <button class="tile" data-item="Hot tub / shed" data-fee="hottub" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-6 9 6M5 10v10h14V10M10 20v-5h4v5"/></svg>Hot tub / shed<small data-feelabel="hottub"></small></button>
+          </div>
+          <p class="hint" id="h1"></p>
+          <div class="wnav"><span></span><button class="btn" data-next="1">Next</button></div>
+        </div>
+        <div class="wstep" data-step="2" hidden>
+          <div class="prog"><span></span><span></span><span></span><span></span></div>
+          <div><span class="stepnum">Step 2 of 4</span><h3>About how much?</h3><p class="muted">A best guess is fine. We confirm the price before loading.</p></div>
+          <div class="sizes" id="cSizes"></div>
+          <p class="hint" id="h2"></p>
+          <div class="wnav"><button class="btn ghost" data-go="1">Back</button><button class="btn" data-next="2">Next</button></div>
+        </div>
+        <div class="wstep" data-step="3" hidden>
+          <div class="prog"><span></span><span></span><span></span><span></span></div>
+          <div><span class="stepnum">Step 3 of 4</span><h3>When works for you?</h3><p class="muted">We text 30 minutes before we arrive.</p></div>
+          <span class="lbl">Pick a day</span>
+          <div class="days" id="cDays"></div>
+          <span class="lbl">Arrival window</span>
+          <div class="slots" id="cSlots"></div>
+          <p class="hint" id="h3"></p>
+          <div class="wnav"><button class="btn ghost" data-go="2">Back</button><button class="btn" data-next="3">Next</button></div>
+        </div>
+        <form class="wstep" data-step="4" id="cForm" hidden novalidate>
+          <div class="prog"><span></span><span></span><span></span><span></span></div>
+          <div><span class="stepnum">Step 4 of 4</span><h3>Where should we go?</h3></div>
+          <div class="fields">
+            <label class="f" for="cName">Your name<input id="cName" autocomplete="name" placeholder="Jordan Lee"></label>
+            <label class="f" for="cPhone">Mobile number<input id="cPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(612) 555-0142"></label>
+            <label class="f full" for="cAddr">Pickup address<input id="cAddr" autocomplete="street-address" placeholder="2210 Maple Ave"></label>
+            <label class="f full" for="cNotes">Anything we should know? <span style="font-weight:400">(optional)</span><textarea id="cNotes" placeholder="Couch is in the basement, side door is unlocked"></textarea></label>
+            <div class="full" style="display:flex;flex-direction:column;gap:6px"><span class="lbl">Photos help us quote <span style="font-weight:400">(optional)</span></span>
+              <div class="photos" id="cPhotos"><label class="addphoto" for="cFile" aria-label="Add photos">+<input id="cFile" type="file" accept="image/*" multiple></label></div></div>
+          </div>
+          <p class="hint" id="h4"></p>
+          <div class="wnav"><button class="btn ghost" type="button" data-go="3">Back</button><button class="btn" type="submit">Review</button></div>
+        </form>
+        <div class="wstep" data-step="5" hidden>
+          <div><span class="stepnum">Almost done</span><h3>Does this look right?</h3></div>
+          <div id="cSummary"></div>
+          <div class="est-price"><div><div class="eyebrow" style="color:var(--muted)">Estimated price</div><span class="muted" style="font-size:13px">Confirmed on-site before we load. Pay after.</span></div><span class="big mono" id="cPrice"></span></div>
+          <div class="wnav"><button class="btn ghost" data-go="4">Back</button><button class="btn" id="cConfirm">Confirm booking</button></div>
+        </div>
+        <div class="wstep" data-step="6" hidden>
+          <div class="done">
+            <div class="check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+            <h3>You're booked!</h3>
+            <p class="muted" style="max-width:40ch" id="cDoneMsg"></p>
+          </div>
+          <div id="cDoneSum"></div>
+          <button class="btn ghost" id="cAgain">Book another pickup</button>
+          <p class="muted" style="font-size:12px;text-align:center">Preview site: this booking is saved in this browser only and isn't sent to anyone yet.</p>
+        </div>
+      </div>
+      <aside class="aside" aria-label="Your booking so far">
+        <span class="eyebrow" style="color:var(--muted)">Your booking</span>
+        <div id="asideBody" class="muted" style="font-size:14px"></div>
+        <div class="est-price"><span class="muted" style="font-size:14px">Estimate</span><span class="big mono" id="asidePrice"></span></div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap faq">
+    <div class="sechead" style="margin:0"><span class="eyebrow">FAQ</span><h2>Questions people ask before booking.</h2></div>
+    <div>
+      <details open><summary>Do I need to be home?</summary><p>Not always. If the items are outside or in an unlocked garage, leave a note in your booking and we'll text you a photo when it's done. We do need someone there to approve the price for indoor jobs.</p></details>
+      <details><summary>Do I have to move things to the curb?</summary><p>No. We pick up from wherever the junk is: basement, attic, upstairs bedroom, backyard. Stairs are included unless it's a heavy appliance or hot tub.</p></details>
+      <details><summary>How do you figure out the price?</summary><p>By how much of our 15-yard trailer your items fill, plus a few item fees for things like mattresses and fridges. We show you the price on-site before we load anything.</p></details>
+      <details><summary>What happens to my stuff?</summary><p>Usable furniture and household goods go to local donation centers. Metal and electronics go to recycling. Only what's left goes to the transfer station.</p></details>
+      <details><summary>How do I pay?</summary><p>After the job is done. We take card, cash, and mobile payments. There's no charge to book or cancel.</p></details>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="cta"><h2>Ready to get your space back?</h2><a class="btn" href="#book">Book a pickup</a></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div style="display:flex;flex-direction:column;gap:10px"><a class="logo" href="#top"><span class="mark"></span>EHL Junk Out</a><p>Junk removal and cleanouts. Two-person crew, same-week pickup.</p></div>
+      <div><h4>Contact</h4><ul><li>Phone: <span class="mono">(555) 000-0000</span></li><li>Mon–Sat, 8 AM – 6 PM</li><li id="footArea"></li></ul></div>
+      <div><h4>Site</h4><ul><li><a href="#pricing">Pricing</a></li><li><a href="#work">Our work</a></li><li><a href="#area">Service area</a></li><li><a href="#book">Book a pickup</a></li></ul></div>
+    </div>
+    <p class="concept">Concept site. Contact details are placeholders.</p>
+  </div>
+</footer>
+
+<button class="btn ownerbtn" id="ownerBtn" hidden>Edit site</button>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="Edit site">
+  <div class="dhead"><div><div class="eyebrow">Owner only</div><h3>Edit site</h3></div><button class="btn ghost small" id="dClose">Close</button></div>
+  <div class="dbody">
+    <div class="dsec"><h4>Trailer load prices</h4><div id="dLoads" style="display:flex;flex-direction:column;gap:8px"></div></div>
+    <div class="dsec"><h4>Extra fees</h4><div id="dExtras" style="display:flex;flex-direction:column;gap:8px"></div></div>
+    <div class="dsec"><h4>Service area</h4>
+      <label class="f" for="dCity">Home base city<input id="dCity"></label>
+      <label class="f" for="dTowns">Towns you cover <span style="font-weight:400">(one per line)</span><textarea id="dTowns" rows="5"></textarea></label>
+      <div class="two">
+        <label class="f" for="dMiles">Free within (miles)<input id="dMiles" type="number" inputmode="numeric" min="0"></label>
+        <label class="f" for="dTravel">Travel fee beyond<div class="money"><input id="dTravel" type="number" inputmode="numeric" min="0"></div></label>
+      </div>
+    </div>
+    <div class="dsec"><h4>About us</h4>
+      <label class="f" for="dAboutHead">Headline<input id="dAboutHead"></label>
+      <label class="f" for="dAboutBody">Your story <span style="font-weight:400">(blank line between paragraphs)</span><textarea id="dAboutBody" rows="7"></textarea></label>
+      <label class="f" for="dSign">Signed by<input id="dSign" placeholder="Your name, Owner"></label>
+    </div>
+    <div class="dsec"><h4>Before &amp; after photos</h4>
+      <div id="dGallery" style="display:flex;flex-direction:column;gap:8px"></div>
+      <div class="upl" id="dUpl">
+        <div class="two">
+          <label for="dBefore">Before photo<input id="dBefore" type="file" accept="image/*"></label>
+          <label for="dAfter">After photo<input id="dAfter" type="file" accept="image/*"></label>
+        </div>
+        <label class="f" for="dCap">Caption<input id="dCap" placeholder="Garage cleanout, half trailer"></label>
+        <button class="btn ghost small" id="dAddPair" type="button">Add photo pair</button>
+      </div>
+      <p class="muted" style="font-size:12px" id="dUplNote" hidden>Photo uploads aren't available in this view.</p>
+    </div>
+  </div>
+  <div class="dfoot"><p class="dstatus" id="dStatus">Changes go live for every visitor when you save.</p><button class="btn" id="dSave">Save &amp; publish</button></div>
+</aside>
+<div class="toast" id="toast" hidden></div>
+</div>
+<script type="application/json" id="site-data">{"updated":"2026-10-28","loads":[{"name":"A few items","desc":"A couch or a couple of appliances","frac":0.125,"price":95},{"name":"One room","desc":"A bedroom set or small storage unit","frac":0.25,"price":144,"pop":true},{"name":"Garage or basement","desc":"A one-car garage, packed","frac":0.5,"price":288},{"name":"Whole house","desc":"Estate or move-out cleanout","frac":1,"price":575}],"extras":[{"id":"mattress","name":"Mattress or box spring","price":25},{"id":"fridge","name":"Fridge or freezer (freon)","price":35},{"id":"hottub","name":"Hot tub teardown","price":40},{"id":"tires","name":"Tires, each","price":15}],"area":{"city":"Your city","towns":[],"freeMiles":15,"travelFee":25},"about":{"head":"Local, owner-run, and we show up when we say we will.","body":"EHL Junk Out started with a truck, a trailer, and a lot of people asking for help getting rid of stuff.\n\nWe keep it simple: we show up in the window you picked, give you a straight price before we touch anything, and leave the place cleaner than we found it. Anything still usable goes to donation before it goes anywhere near the dump.","sign":""},"gallery":[]}</script>
+<script id="main-js">
+const RESET=':root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}';
+const PRISTINE=document.getElementById("app").outerHTML;
+let DATA=JSON.parse(document.getElementById("site-data").textContent);
+
+const WINDOWS=[["8–10 AM","Morning"],["10–12 PM","Late morning"],["12–2 PM","Afternoon"],["2–4 PM","Late afternoon"]];
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const esc=s=>String(s??"").replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+const fracLabel=f=>({0.125:"⅛",0.25:"¼",0.5:"½",1:"Full"})[f]||"";
+const yards=f=>{const y=15*f;return (Number.isInteger(y)?y:+y.toFixed(2))+" yd³"};
+const fee=id=>(DATA.extras.find(e=>e.id===id)||{}).price||0;
+const imgSrc=v=>/^[0-9a-f]{32}$/.test(v)?"/_blob/"+v:v;
+let toastT;function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2200)}
+
+/* ---------- render content from DATA ---------- */
+let heroI=1;
+function renderHero(){const l=DATA.loads[heroI];$("#hFill").style.width=l.frac*100+"%";$("#hYards").textContent=yards(l.frac);$("#hPrice").textContent="$"+l.price}
+function renderPricing(){
+  $("#loadCards").innerHTML=DATA.loads.map(l=>`<div class="load${l.pop?" pop":""}">${l.pop?'<span class="tag">Most booked</span>':""}<div class="minibed"><i style="width:${l.frac*100}%"></i></div>
+  <div><h3>${esc(l.name)}</h3><span class="yd">${fracLabel(l.frac)} trailer · ${yards(l.frac)}</span></div><div class="price mono">$${l.price}</div><p>${esc(l.desc)}</p></div>`).join("");
+  $("#extrasList").innerHTML=DATA.extras.map(e=>`<li><span>${esc(e.name)}</span><span class="mono">+$${e.price}</span></li>`).join("");
+  $("#updated").textContent="Prices updated "+new Date(DATA.updated+"T12:00").toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"});
+  $$("[data-feelabel]").forEach(s=>s.textContent="+$"+fee(s.dataset.feelabel));
+  $("#cSizes").innerHTML=DATA.loads.map((l,i)=>`<button class="size" type="button" data-i="${i}" aria-pressed="${c.i===i}"><div class="minibed"><i style="width:${l.frac*100}%"></i></div><b>${esc(l.name)}</b><small>${esc(l.desc)}</small><span class="from">from $${l.price}</span></button>`).join("");
+  $$("#cSizes .size").forEach(b=>b.onclick=()=>pickSize(+b.dataset.i));
+  renderHero();
+}
+function renderGallery(){
+  const g=DATA.gallery;
+  if(!g.length){$("#gallery").innerHTML=[1,2].map(()=>`<div class="ba"><div class="ph"><div>Before</div><div>After</div></div><p class="muted">Job photos coming soon.</p></div>`).join("");return}
+  $("#gallery").innerHTML=g.map((p,i)=>`<div class="ba"><div class="cmp"><img src="${esc(imgSrc(p.after))}" alt="After: ${esc(p.caption)}" loading="lazy"><img class="before" src="${esc(imgSrc(p.before))}" alt="Before: ${esc(p.caption)}" loading="lazy">
+  <span class="lb l">Before</span><span class="lb r">After</span><span class="bar"></span><span class="knob">⇆</span><input type="range" min="0" max="100" value="50" id="cmp${i}" aria-label="Compare before and after"></div>${p.caption?`<p>${esc(p.caption)}</p>`:""}</div>`).join("");
+  $$(".cmp input").forEach(r=>r.oninput=()=>{const box=r.parentElement,v=r.value;box.querySelector(".before").style.clipPath=`inset(0 ${100-v}% 0 0)`;box.querySelector(".bar").style.left=v+"%";box.querySelector(".knob").style.left=v+"%"});
+}
+function renderArea(){
+  const a=DATA.area;
+  $("#areaHead").textContent="Based in "+a.city+".";
+  $("#areaNote").textContent=a.towns.length?"We cover these towns and everything in between.":"Our full town list is coming soon. Book anyway and we'll confirm we can reach you.";
+  $("#towns").innerHTML=a.towns.map(t=>`<span>${esc(t)}</span>`).join("");
+  $("#areaFees").innerHTML=`<div><span>Within ${a.freeMiles} miles of ${esc(a.city)}</span><b>No travel fee</b></div><div><span>Farther out</span><b class="mono">+$${a.travelFee}</b></div>`;
+  $("#rCity").textContent=a.city;$("#rIn").textContent=a.freeMiles+" mi · free";$("#rOut").textContent="+$"+a.travelFee+" beyond";
+  $("#footArea").textContent="Based in "+a.city;
+}
+function renderAbout(){
+  $("#aboutHead").textContent=DATA.about.head;
+  $("#aboutBody").innerHTML=DATA.about.body.split(/\n\s*\n/).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join("");
+  $("#aboutSign").textContent=DATA.about.sign?"— "+DATA.about.sign:"";
+}
+function renderAll(){renderPricing();renderGallery();renderArea();renderAbout();renderAside()}
+
+/* ---------- hero estimator ---------- */
+$$("#hLoads .chip").forEach(b=>b.onclick=()=>{$$("#hLoads .chip").forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");heroI=+b.dataset.i;renderHero()});
+$("#hBook").addEventListener("click",()=>pickSize(heroI));
+
+/* ---------- booking wizard ---------- */
+const c={items:new Set(),i:null,date:null,win:null,photos:[]};
+const fees=()=>$$("#cItems .tile").filter(t=>c.items.has(t.dataset.item)&&t.dataset.fee).reduce((a,t)=>a+fee(t.dataset.fee),0);
+const estimate=()=>c.i==null?null:DATA.loads[c.i].price+fees();
+let bookings=store.get("ehl-bookings",[]);
+
+function show(n){
+  $$(".wstep").forEach(s=>s.hidden=+s.dataset.step!==n);
+  const p=$(`.wstep[data-step="${n}"] .prog`);if(p)[...p.children].forEach((s,k)=>s.classList.toggle("on",k<n));
+  $$(".hint").forEach(h=>h.textContent="");
+  if(n===3)renderDays();if(n===5)renderReview();renderAside();
+}
+function scrollToBook(){const r=$(".wizard").getBoundingClientRect();if(r.top<70||r.top>innerHeight*.6)$("#book").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth"})}
+$$("[data-go]").forEach(b=>b.addEventListener("click",()=>{show(+b.dataset.go);scrollToBook()}));
+$$("#cItems .tile").forEach(t=>t.onclick=()=>{const k=t.dataset.item;c.items.has(k)?c.items.delete(k):c.items.add(k);t.setAttribute("aria-pressed",c.items.has(k));renderAside()});
+function pickSize(i){c.i=i;$$("#cSizes .size").forEach(x=>x.setAttribute("aria-pressed",+x.dataset.i===i));renderAside()}
+$$("[data-next]").forEach(b=>b.onclick=()=>{
+  const n=+b.dataset.next;
+  if(n===1&&!c.items.size)return $("#h1").textContent="Pick at least one thing so we know what to bring.";
+  if(n===2&&c.i==null)return $("#h2").textContent="Choose the size closest to your load.";
+  if(n===3&&(!c.date||!c.win))return $("#h3").textContent=!c.date?"Pick a day first.":"Pick an arrival window.";
+  show(n+1);scrollToBook();
+});
+const localIso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+function renderDays(){
+  const box=$("#cDays");box.innerHTML="";
+  for(let k=1;k<=14;k++){
+    const d=new Date();d.setDate(d.getDate()+k);const v=localIso(d);const closed=d.getDay()===0;
+    const b=document.createElement("button");b.type="button";b.className="day";b.disabled=closed;b.setAttribute("aria-pressed",c.date===v);
+    b.innerHTML=`${d.toLocaleDateString(undefined,{weekday:"short"})}<b>${d.getDate()}</b>${closed?"Closed":d.toLocaleDateString(undefined,{month:"short"})}`;
+    b.onclick=()=>{c.date=v;c.win=null;renderDays();renderAside()};box.appendChild(b);
+  }
+  const s=$("#cSlots");s.innerHTML="";
+  WINDOWS.forEach(([w,label])=>{
+    const taken=c.date&&bookings.some(j=>j.date===c.date&&j.win===w);
+    const b=document.createElement("button");b.type="button";b.className="slot";b.disabled=!c.date||taken;b.setAttribute("aria-pressed",c.win===w);
+    b.innerHTML=`${w}<small>${taken?"Already booked":!c.date?"Pick a day":label}</small>`;
+    b.onclick=()=>{c.win=w;renderDays();renderAside()};s.appendChild(b);
+  });
+}
+$("#cFile").onchange=e=>{[...e.target.files].slice(0,6-c.photos.length).forEach(f=>{const r=new FileReader();r.onload=()=>{c.photos.push(r.result);drawPhotos()};r.readAsDataURL(f)});e.target.value=""};
+function drawPhotos(){$$("#cPhotos img").forEach(i=>i.remove());c.photos.forEach(p=>{const im=document.createElement("img");im.src=p;im.alt="Photo of items";$("#cPhotos").insertBefore(im,$("#cPhotos .addphoto"))})}
+$("#cForm").addEventListener("submit",e=>{e.preventDefault();
+  if(!$("#cName").value.trim())return $("#h4").textContent="Add your name so our crew knows who to ask for.";
+  if($("#cPhone").value.replace(/\D/g,"").length<10)return $("#h4").textContent="Enter a 10-digit mobile number so we can text you.";
+  if(!$("#cAddr").value.trim())return $("#h4").textContent="Add the pickup address.";
+  show(5);scrollToBook();
+});
+const niceDate=v=>new Date(v+"T12:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
+function summary(edit){
+  const row=(k,v,st)=>`<div class="sumrow"><span class="k">${k}</span><div class="v">${v}${edit?`<button class="edit" data-edit="${st}">Change</button>`:""}</div></div>`;
+  return row("Items",esc([...c.items].join(", ")),1)+row("Size",esc(DATA.loads[c.i].name),2)+row("When",`${niceDate(c.date)}<br>${c.win}`,3)+
+    row("Where",esc($("#cAddr").value),4)+row("Contact",esc($("#cName").value)+"<br>"+esc($("#cPhone").value),4)+(c.photos.length?row("Photos",c.photos.length+" added",4):"");
+}
+function renderReview(){$("#cSummary").innerHTML=summary(true);$$("#cSummary [data-edit]").forEach(b=>b.onclick=()=>show(+b.dataset.edit));$("#cPrice").textContent="$"+estimate()}
+function renderAside(){
+  const parts=[];
+  if(c.items.size)parts.push(`<div class="sumrow"><span class="k">Items</span><span class="v">${esc([...c.items].join(", "))}</span></div>`);
+  if(c.i!=null)parts.push(`<div class="sumrow"><span class="k">Size</span><span class="v">${esc(DATA.loads[c.i].name)}</span></div>`);
+  if(c.date)parts.push(`<div class="sumrow"><span class="k">When</span><span class="v">${niceDate(c.date)}${c.win?"<br>"+c.win:""}</span></div>`);
+  $("#asideBody").innerHTML=parts.join("")||"Pick what's going to see a price.";
+  $("#asidePrice").textContent=estimate()?"$"+estimate():"—";
+}
+$("#cConfirm").onclick=()=>{
+  bookings.push({date:c.date,win:c.win,name:$("#cName").value.trim(),addr:$("#cAddr").value.trim(),phone:$("#cPhone").value,items:[...c.items],size:DATA.loads[c.i].name,notes:$("#cNotes").value.trim(),price:estimate(),at:Date.now()});
+  store.set("ehl-bookings",bookings);
+  $("#cDoneMsg").textContent=`See you ${niceDate(c.date)} between ${c.win}. We'll text ${$("#cPhone").value} when the truck is 30 minutes out.`;
+  $("#cDoneSum").innerHTML=summary(false)+`<div class="sumrow"><span class="k">Estimate</span><span class="v mono" style="color:var(--amber)">$${estimate()}</span></div>`;
+  show(6);scrollToBook();
+};
+$("#cAgain").onclick=()=>{c.items.clear();c.i=null;c.date=null;c.win=null;c.photos=[];drawPhotos();$("#cForm").reset();$$("#cItems .tile,#cSizes .size").forEach(x=>x.setAttribute("aria-pressed","false"));show(1)};
+
+/* ---------- owner editor ---------- */
+let artifactApi=null, assetsApi=null, draft=null;
+function openDrawer(){
+  draft=JSON.parse(JSON.stringify(DATA));
+  $("#dLoads").innerHTML=draft.loads.map((l,i)=>`<div class="prow"><span>${esc(l.name)} <span class="muted mono" style="font-size:12px">${fracLabel(l.frac)}</span></span><div class="money"><input type="number" inputmode="numeric" min="0" id="dl${i}" value="${l.price}" aria-label="${esc(l.name)} price"></div></div>`).join("");
+  $("#dExtras").innerHTML=draft.extras.map((e,i)=>`<div class="prow"><span>${esc(e.name)}</span><div class="money"><input type="number" inputmode="numeric" min="0" id="de${i}" value="${e.price}" aria-label="${esc(e.name)} fee"></div></div>`).join("");
+  $("#dCity").value=draft.area.city;$("#dTowns").value=draft.area.towns.join("\n");$("#dMiles").value=draft.area.freeMiles;$("#dTravel").value=draft.area.travelFee;
+  $("#dAboutHead").value=draft.about.head;$("#dAboutBody").value=draft.about.body;$("#dSign").value=draft.about.sign;
+  $("#dUpl").hidden=!assetsApi;$("#dUplNote").hidden=!!assetsApi;
+  drawDGallery();setStatus("Changes go live for every visitor when you save.");
+  $("#drawer").hidden=false;$("#scrim").hidden=false;
+}
+function closeDrawer(){$("#drawer").hidden=true;$("#scrim").hidden=true}
+function drawDGallery(){
+  $("#dGallery").innerHTML=draft.gallery.length?draft.gallery.map((p,i)=>`<div class="gitem"><img src="${esc(imgSrc(p.before))}" alt="Before"><img src="${esc(imgSrc(p.after))}" alt="After"><span style="font-size:13px;min-width:0;overflow-wrap:anywhere">${esc(p.caption)||'<span class="muted">No caption</span>'}</span><button class="btn ghost small" type="button" data-rm="${i}">Remove</button></div>`).join(""):`<p class="muted" style="font-size:13px">No photos yet. Visitors see "coming soon" boxes.</p>`;
+  $$("#dGallery [data-rm]").forEach(b=>b.onclick=()=>{draft.gallery.splice(+b.dataset.rm,1);drawDGallery()});
+}
+function setStatus(m,err){const s=$("#dStatus");s.textContent=m;s.classList.toggle("err",!!err)}
+$("#dClose").onclick=closeDrawer;$("#scrim").onclick=closeDrawer;
+$("#ownerBtn").onclick=openDrawer;
+$("#dAddPair").onclick=async()=>{
+  const b=$("#dBefore").files[0],a=$("#dAfter").files[0];
+  if(!b||!a)return setStatus("Choose both a before and an after photo.",true);
+  const btn=$("#dAddPair");btn.disabled=true;setStatus("Uploading photos…");
+  try{
+    const [ub,ua]=await Promise.all([assetsApi.upload(b),assetsApi.upload(a)]);
+    draft.gallery.push({before:ub.id,after:ua.id,caption:$("#dCap").value.trim()});
+    $("#dBefore").value="";$("#dAfter").value="";$("#dCap").value="";drawDGallery();
+    setStatus("Photos added. Save & publish to show them on the site.");
+  }catch(e){setStatus(e&&e.code==="too_large"?"One of those photos is too big. Try a smaller one (under 20 MB).":"Upload didn't go through. Check your connection and try again.",true)}
+  btn.disabled=false;
+};
+function readDraft(){
+  const n=(id,d)=>{const v=Math.round(+$(id).value);return Number.isFinite(v)&&v>=0?v:d};
+  draft.loads.forEach((l,i)=>l.price=n("#dl"+i,l.price));
+  draft.extras.forEach((e,i)=>e.price=n("#de"+i,e.price));
+  draft.area={city:$("#dCity").value.trim()||"Your city",towns:$("#dTowns").value.split(/[\n,]/).map(s=>s.trim()).filter(Boolean),freeMiles:n("#dMiles",15),travelFee:n("#dTravel",25)};
+  draft.about={head:$("#dAboutHead").value.trim()||DATA.about.head,body:$("#dAboutBody").value.trim()||DATA.about.body,sign:$("#dSign").value.trim()};
+  draft.updated=localIso(new Date());
+}
+function buildDoc(data){
+  const json=JSON.stringify(data).replace(/</g,"\\u003c");
+  return '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>'+RESET+'</style></head><body>'+
+    '<title>EHL Junk Out</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n'+
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">\n'+
+    '<style id="css">'+document.getElementById("css").textContent+'</style>\n'+PRISTINE+'\n'+
+    '<script type="application/json" id="site-data">'+json+'</'+'script>\n'+
+    '<script id="main-js">'+document.getElementById("main-js").textContent+'</'+'script>\n</body></html>';
+}
+$("#dSave").onclick=async()=>{
+  readDraft();
+  const btn=$("#dSave");btn.disabled=true;setStatus("Publishing…");
+  try{await artifactApi.publish(buildDoc(draft));setStatus("Published. Reloading…")}
+  catch(e){
+    const code=e&&e.code;
+    if(code==="conflict")setStatus("Someone else saved a newer version first. The page is reloading with it.",true);
+    else if(code==="not_writer"||code==="not_granted"){setStatus("This view is read-only, so changes can't be saved here.",true);$("#ownerBtn").hidden=true}
+    else if(code==="rate_limited")setStatus("Saving too often. Wait a minute and try again.",true);
+    else setStatus("Couldn't publish right now. Try again in a moment.",true);
+    btn.disabled=false;
+  }
+};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#drawer").hidden)closeDrawer()});
+
+renderAll();
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  const [art,user,assets]=await Promise.all([claude.use("artifact"),claude.use("user"),claude.use("assets")]);
+  const canEdit=user?await user.canEdit().catch(()=>false):false;
+  if(art&&canEdit){artifactApi=art;assetsApi=assets;$("#ownerBtn").hidden=false}
+})();
+</script>
+
+</body>
+</html>
