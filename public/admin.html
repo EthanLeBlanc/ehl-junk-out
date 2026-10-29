@@ -258,10 +258,11 @@ function renderBookings(){
   const count=s=>BOOKINGS.filter(b=>b.status===s).length;
   const upcoming=BOOKINGS.filter(b=>b.status==="accepted"&&b.date>=t).length;
   const month=t.slice(0,7);
-  const revenue=BOOKINGS.filter(b=>b.status==="done"&&(b.date||"").startsWith(month)).reduce((a,b)=>a+(b.finalPrice??b.quote?.amount??b.estimate??0),0);
+  const doneMonth=b=>{if(!b.doneAt)return (b.date||"").slice(0,7);const d=new Date(b.doneAt);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")};
+  const revenue=BOOKINGS.filter(b=>b.status==="done"&&doneMonth(b)===month).reduce((a,b)=>a+(b.finalPrice??b.quote?.amount??b.estimate??0),0);
   $("#stats").innerHTML=[
     ["New, needs a quote",count("new"),"var(--new)"],["Waiting on customer",count("quoted"),"var(--quoted)"],
-    ["Accepted, upcoming",upcoming,"var(--accepted)"],["Done this month","$"+revenue.toLocaleString(),"var(--done)"]
+    ["Accepted, upcoming",upcoming,"var(--accepted)"],["Earned this month","$"+revenue.toLocaleString(),"var(--done)"]
   ].map(([l,v,c])=>`<div class="stat" style="border-top-color:${c}"><b class="mono">${v}</b><span>${l}</span></div>`).join("");
   const OPEN=["new","quoted","accepted"];
   let list=BOOKINGS.filter(b=>FILTER==="all"?true:FILTER==="open"?OPEN.includes(b.status):b.status===FILTER);

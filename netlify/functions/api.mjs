@@ -203,6 +203,7 @@ export default async (req) => {
           if (!STATUSES.includes(body.status)) return fail(400, "Unknown status");
           log(`Status: ${b.status} → ${body.status}`);
           b.status = body.status;
+          if (b.status === "done") b.doneAt = now; else delete b.doneAt;
         }
         if ("internalNote" in body) b.internalNote = str(body.internalNote, 2000);
         if ("finalPrice" in body) b.finalPrice = body.finalPrice === "" || body.finalPrice === null ? null : num(body.finalPrice);
