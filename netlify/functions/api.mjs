@@ -205,6 +205,7 @@ export default async (req) => {
           b.status = body.status;
           if (b.status === "done") b.doneAt = now; else delete b.doneAt;
         }
+        if (body.status === "done" && b.status === "done" && !b.doneAt) b.doneAt = now;
         if ("internalNote" in body) b.internalNote = str(body.internalNote, 2000);
         if ("finalPrice" in body) b.finalPrice = body.finalPrice === "" || body.finalPrice === null ? null : num(body.finalPrice);
         if (body.date && /^\d{4}-\d{2}-\d{2}$/.test(body.date) && body.date !== b.date) { log(`Moved to ${body.date}`); b.date = body.date; }
