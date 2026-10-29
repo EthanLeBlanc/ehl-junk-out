@@ -476,7 +476,6 @@ footer{border-top:1px solid var(--line);padding-block:40px;font-size:14px;color:
             <label class="f" for="cName">Your name<input id="cName" autocomplete="name" placeholder="Jordan Lee"></label>
             <label class="f" for="cPhone">Mobile number<input id="cPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(612) 555-0142"></label>
             <label class="f full" for="cEmail">Email <span style="font-weight:400">(optional, for your quote)</span><input id="cEmail" type="email" autocomplete="email" placeholder="jordan@example.com"></label>
-            <input id="cWebsite" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px">
             <label class="f full" for="cAddr">Pickup address<input id="cAddr" autocomplete="street-address" placeholder="2210 Maple Ave"></label>
             <label class="f full" for="cNotes">Anything we should know? <span style="font-weight:400">(optional)</span><textarea id="cNotes" placeholder="Couch is in the basement, side door is unlocked"></textarea></label>
             <div class="full" style="display:flex;flex-direction:column;gap:6px"><span class="lbl">Photos help us quote <span style="font-weight:400">(optional)</span></span>
@@ -697,6 +696,7 @@ $("#hBook").addEventListener("click",()=>pickSize(heroI));
 const c={items:new Set(),i:null,date:null,win:null,photos:[]};
 const fees=()=>$$("#cItems .tile").filter(t=>c.items.has(t.dataset.item)&&t.dataset.fee).reduce((a,t)=>a+fee(t.dataset.fee),0);
 const estimate=()=>c.i==null?null:DATA.loads[c.i].price+fees();
+const PAGE_LOADED=Date.now();
 const takenByDate={};
 async function loadTaken(date){
   try{const r=await fetch("/api/slots?date="+date);if(r.ok){takenByDate[date]=(await r.json()).taken||[];if(c.date===date)renderDays()}}catch(e){}
@@ -767,7 +767,7 @@ $("#cConfirm").onclick=async()=>{
     const photos=(await Promise.all(c.photos.slice(0,4).map(shrink))).filter(Boolean);
     const r=await fetch("/api/bookings",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({
       name:$("#cName").value.trim(),phone:$("#cPhone").value.trim(),email:$("#cEmail").value.trim(),addr:$("#cAddr").value.trim(),
-      website:$("#cWebsite").value,date:c.date,win:c.win,items:[...c.items],size:DATA.loads[c.i].name,estimate:estimate(),notes:$("#cNotes").value.trim(),photos})});
+      elapsed:Date.now()-PAGE_LOADED,date:c.date,win:c.win,items:[...c.items],size:DATA.loads[c.i].name,estimate:estimate(),notes:$("#cNotes").value.trim(),photos})});
     const j=await r.json().catch(()=>({}));
     if(!r.ok){
       hint.textContent=j.error||"Your booking didn't go through. Try again in a moment.";

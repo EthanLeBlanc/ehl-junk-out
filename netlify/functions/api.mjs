@@ -95,7 +95,8 @@ export default async (req) => {
     if (path === "/bookings" && method === "POST") {
       const body = await req.json().catch(() => null);
       if (!body) return fail(400, "Bad request");
-      if (str(body.website)) return json({ ok: true, id: "x" }); // honeypot: bots fill hidden fields
+      // Bot check: nobody finishes all four booking steps in under 3 seconds.
+      if (typeof body.elapsed === "number" && body.elapsed < 3000) return fail(400, "Please take a moment to fill in the form, then try again.");
       const name = str(body.name, 80), phone = str(body.phone, 30), addr = str(body.addr, 200);
       const email = str(body.email, 120);
       const date = str(body.date, 10), win = str(body.win, 20);
