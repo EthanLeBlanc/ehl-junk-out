@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="EHL Junk Out: junk removal and cleanouts. Furniture, appliances, yard waste, garage cleanouts. Book a pickup online.">
+<meta name="description" content="EHL Junk Out: junk removal and cleanouts in Brooklyn Park, MN and within 50 miles. Furniture, appliances, yard waste, garage cleanouts. Book a pickup online.">
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>EHL Junk Out</title>
+<title>EHL Junk Out | Junk Removal in Brooklyn Park, MN</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
 <style id="css">
@@ -289,13 +289,13 @@ footer{border-top:1px solid var(--line);padding-block:40px;font-size:14px;color:
 <section class="hero">
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <span class="eyebrow">Junk removal · Same-week pickup</span>
+      <span class="eyebrow">Junk removal · Brooklyn Park, MN</span>
       <h1>Got junk?<br><em>We'll haul it out.</em></h1>
       <p class="lead">Couches, fridges, garage piles, yard debris. Point at it and our two-person crew loads it, hauls it, and sweeps up after. You pay by how much space it takes in the trailer.</p>
       <div class="ctas"><a class="btn" href="#book">Book a pickup</a><a class="btn ghost" href="#pricing">See prices</a></div>
       <div class="trust">
         <div><b>$0</b><span>to book</span></div>
-        <div><b>2 hr</b><span>arrival window</span></div>
+        <div><b>50 mi</b><span>service radius</span></div>
         <div><b>We lift</b><span>you don't</span></div>
       </div>
     </div>
@@ -544,7 +544,7 @@ footer{border-top:1px solid var(--line);padding-block:40px;font-size:14px;color:
 </aside>
 <div class="toast" id="toast" hidden></div>
 </div>
-<script type="application/json" id="site-data">{"updated":"2026-10-28","loads":[{"name":"A few items","desc":"A couch or a couple of appliances","frac":0.125,"price":95},{"name":"One room","desc":"A bedroom set or small storage unit","frac":0.25,"price":144,"pop":true},{"name":"Garage or basement","desc":"A one-car garage, packed","frac":0.5,"price":288},{"name":"Whole house","desc":"Estate or move-out cleanout","frac":1,"price":575}],"extras":[{"id":"mattress","name":"Mattress or box spring","price":25},{"id":"fridge","name":"Fridge or freezer (freon)","price":35},{"id":"hottub","name":"Hot tub teardown","price":40},{"id":"tires","name":"Tires, each","price":15}],"area":{"city":"Your city","towns":[],"freeMiles":15,"travelFee":25},"about":{"head":"Local, owner-run, and we show up when we say we will.","body":"EHL Junk Out started with a truck, a trailer, and a lot of people asking for help getting rid of stuff.\n\nWe keep it simple: we show up in the window you picked, give you a straight price before we touch anything, and leave the place cleaner than we found it. Anything still usable goes to donation before it goes anywhere near the dump.","sign":""},"gallery":[]}</script>
+<script type="application/json" id="site-data">{"updated": "2026-10-29", "loads": [{"name": "A few items", "desc": "A couch or a couple of appliances", "frac": 0.125, "price": 95}, {"name": "One room", "desc": "A bedroom set or small storage unit", "frac": 0.25, "price": 144, "pop": true}, {"name": "Garage or basement", "desc": "A one-car garage, packed", "frac": 0.5, "price": 288}, {"name": "Whole house", "desc": "Estate or move-out cleanout", "frac": 1, "price": 575}], "extras": [{"id": "mattress", "name": "Mattress or box spring", "price": 25}, {"id": "fridge", "name": "Fridge or freezer (freon)", "price": 35}, {"id": "hottub", "name": "Hot tub teardown", "price": 40}, {"id": "tires", "name": "Tires, each", "price": 15}], "area": {"city": "Brooklyn Park, MN", "towns": ["Brooklyn Park", "Brooklyn Center", "Maple Grove", "Champlin", "Osseo", "Coon Rapids", "Anoka", "Blaine", "Fridley", "Plymouth", "Minneapolis", "St. Paul", "Minnetonka", "Bloomington", "Eden Prairie", "Elk River"], "freeMiles": 50, "travelFee": 0}, "about": {"head": "Local, owner-run, and we show up when we say we will.", "body": "EHL Junk Out started with a truck, a trailer, and a lot of people asking for help getting rid of stuff.\n\nWe keep it simple: we show up in the window you picked, give you a straight price before we touch anything, and leave the place cleaner than we found it. Anything still usable goes to donation before it goes anywhere near the dump.", "sign": ""}, "gallery": []}</script>
 <script id="main-js">
 const RESET=':root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}';
 const PRISTINE=document.getElementById("app").outerHTML;
@@ -583,10 +583,10 @@ function renderGallery(){
 function renderArea(){
   const a=DATA.area;
   $("#areaHead").textContent="Based in "+a.city+".";
-  $("#areaNote").textContent=a.towns.length?"We cover these towns and everything in between.":"Our full town list is coming soon. Book anyway and we'll confirm we can reach you.";
+  $("#areaNote").textContent=a.towns.length?"We work anywhere within "+a.freeMiles+" miles of "+a.city+", including:":"Our full town list is coming soon. Book anyway and we'll confirm we can reach you.";
   $("#towns").innerHTML=a.towns.map(t=>`<span>${esc(t)}</span>`).join("");
-  $("#areaFees").innerHTML=`<div><span>Within ${a.freeMiles} miles of ${esc(a.city)}</span><b>No travel fee</b></div><div><span>Farther out</span><b class="mono">+$${a.travelFee}</b></div>`;
-  $("#rCity").textContent=a.city;$("#rIn").textContent=a.freeMiles+" mi · free";$("#rOut").textContent="+$"+a.travelFee+" beyond";
+  $("#areaFees").innerHTML=`<div><span>Within ${a.freeMiles} miles of ${esc(a.city)}</span><b>No travel fee</b></div><div><span>Farther than ${a.freeMiles} miles</span><b${a.travelFee?' class="mono"':""}>${a.travelFee?"+$"+a.travelFee:"Ask us"}</b></div>`;
+  $("#rCity").textContent=a.city;$("#rIn").textContent=a.freeMiles+" mi · free";$("#rOut").textContent=a.travelFee?"+$"+a.travelFee+" beyond":"Farther out? Ask us";
   $("#footArea").textContent="Based in "+a.city;
 }
 function renderAbout(){
